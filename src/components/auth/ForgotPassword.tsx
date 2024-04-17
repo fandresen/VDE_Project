@@ -1,56 +1,95 @@
-import { SyntheticEvent, useState } from "react"
+import { useState } from "react"
 import axios from "axios";
+import { Link } from "react-router-dom";
+import { FaCheckCircle, FaTimesCircle } from "react-icons/fa";
 
 const ForgotPassword = () => {
     const [email, setEmail] = useState('');
-    // const [notify, setNotify] = useState('');
+    const [notify, setNotify] = useState({
+      show: false,
+      error: false,
+      message: ''
+    });
 
-    const submit = async (e: SyntheticEvent) => {
-        e.preventDefault()
-      
-        await axios.post('/auth/forgot-password', {email})
-    
+    const submit = async (e: React.FormEvent<HTMLFormElement>) => {
+        // reset the value in Form after submit
+        e.preventDefault();
+        e.currentTarget.reset();
+        try {
+          await axios.post('/auth/forgot-password', {email})
+          setNotify({
+            show: true,
+            error: false,
+            message:"Please check your Email!"
+          })
+        } catch(e) {
+          setNotify({
+            show: true,
+            error: true,
+            message: 'Wrong E-mail!'
+          })
+        }
+    }
+
+    let info;
+    let icon;
+    if (notify.show) {
+      icon = notify.error ? <FaTimesCircle className="mr-1"/> : <FaCheckCircle className="mr-1"/>
+      info = <div className={`flex items-center text-[12px] ${notify.error ? 'text-red-500' : 'text-green-500'}`}>
+        {icon} {notify.message}
+      </div>
     }
 
   return (
-    <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
-        <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-          <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
-            Reset your password
-          </h2>
-        </div>
-
-        <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-          <form onSubmit={submit} className="space-y-6" action="#" method="POST">
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium leading-6 text-gray-900">
-                Email address
-              </label>
-              <div className="mt-2">
-                <input
-                    onChange={e => setEmail(e.target.value)}
-                  id="email"
-                  name="email"
-                  type="email"
-                  autoComplete="email"
-                  required
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                />
+    <div className="flex items-center justify-center
+     flex-col px-6 py-12 lg:px-8 h-screen bg-gradient-to-r from-gray-200 to-blue-200">
+      <div className=" relative bg-white rounded-[20px] shadow-xl overflow-hidden w-full max-w-3xl min-h-[450px]">
+        <div className="absolute top-0 h-full left-1/2 w-1/2 transition-all ease-in-out z-10 transform ">
+          <form onSubmit={submit}  action="#" method="POST" className="flex items-center justify-center h-full px-10 flex-col bg-[#fff]">
+            <h1 className="text-[40px] font-bold mb-5">Forgot Password!</h1>
+            <span className="text-[12px] ">Enter your email to receive a password reset link.</span>
+              <div>
+                <div className="mt-2">
+                  <input
+                      onChange={e => setEmail(e.target.value)}
+                    id="email"
+                    name="email"
+                    type="email"
+                    autoComplete="email"
+                    placeholder="Email"
+                    required
+                    className=" bg-[#eee] border-none my-2 px-4 py-3 text-sm rounded-md w-full outline-none"
+                  />
+                </div>
+                {info}
               </div>
-            </div>
-
-            <div>
-              <button
-                type="submit"
-                className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-              >
-                Continue
-              </button>
-            </div>
-          </form>
 
           
+
+              <div>
+                <button
+                  type="submit"
+                  className="bg-[#512da8] text-[#fff] text-xs md:text-sm px-12 py-2 border-transparent rounded-md font-semibold uppercase tracking-wide mt-4 cursor-pointer hover:text-[#0F0F0F] hover:shadow-md hover:shadow-[#000]"
+                >
+                  Continue
+                </button>
+              </div>
+            </form>
         </div>
+        <div className="absolute top-0 h-full left-0 w-1/2 transition-all duration-600 easy-in-out z-1 overflow-hidden rounded-tr-[150px] rounded-bl-none rounded-br-[150px] rounded-tl-none ">
+          <div className="relative left-[-100%] w-[200%] h-full bg-gradient-to-r from-indigo-500 to-purple-800 text-[#fff] transition-all duration-600 ease-in-out ">
+            <div className="absolute w-1/2 h-full right-0 flex items-center justify-center flex-col px-4 text-center top-0 transform -translate-0 transition-all duration-600 ease-in-out">
+              <h1 className="text-[30px] font-bold">Welcome Back!</h1>
+              <p className="text-[14px] leading-[20px] tracking-[0.3px] my-5">Enter your personal details to use your features in site</p>
+              <Link to={"/login"}>
+                <button className="bg-transparent bg-[#512da8] text-[#fff] text-xs md:text-sm px-12 py-2 border border-[#ebe9e9] border-transparent rounded-md font-semibold uppercase tracking-wide mt-4 cursor-pointer hover:text-[#000] hover:border-[#EEE] hover:shadow-xl">Log In</button>
+              </Link>
+              
+            </div>
+          </div>
+        </div>
+
+      </div>
       </div>
   )
 }

@@ -3,7 +3,7 @@ import { useParams, Navigate } from "react-router-dom";
 import axios from "axios"
 
 const ResetPassword = () => {
-    const [password, setPassword] =useState('');
+    const [password, setPassword] = useState('');
     const [passwordConfirm, setPasswordConfirm] = useState('');
     const [redirect, setRedirect] = useState(false);
     const {token} = useParams();
@@ -27,6 +27,7 @@ const ResetPassword = () => {
     
 
   return (
+    
     <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-sm">
           
