@@ -7,23 +7,30 @@ import { setAuth } from "../../redux/authSlice";
 import { RootState } from "../../redux/store";
 import Cookies from 'js-cookie';
 import { jwtDecode } from 'jwt-decode';
+
 import { FaCheckCircle, FaTimesCircle } from "react-icons/fa";
+import { PiEyeClosedDuotone, PiEyeBold } from "react-icons/pi";
+
 
 
 const login = () => {
     const dispatch = useDispatch();
     const isAuthenticated = useSelector((state: RootState) => state.auth.value);
+
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+
+    const [showPassword, setShowPassword] = useState(false);
     const [notify, setNotify] = useState({
       show: false,
       error: false,
       message: ''
     })
 
-    const submit = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.currentTarget.reset();
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+
+        setPassword('');
 
         try {
           const {data, status, headers} = await axios.post('/auth/login', {
@@ -59,6 +66,10 @@ const login = () => {
 
       }
 
+    const handleShowPassword = () => {
+      setShowPassword(!showPassword);
+    }
+
       let info;
       let icon;
       if (notify.show) {
@@ -93,9 +104,9 @@ const login = () => {
      flex-col px-6 py-12 lg:px-8 h-screen bg-gradient-to-r from-gray-200 to-blue-200">
       <div className=" relative bg-white rounded-[20px] shadow-xl overflow-hidden w-full max-w-3xl min-h-[450px]">
         <div className="absolute top-0 h-full left-0 w-1/2 transition-all duration-600 ease-in-out transform animate-move">
-          <form onSubmit={submit}  action="#" method="POST" className="flex items-center justify-center h-full px-10 flex-col bg-[#fff]">
+          <form onSubmit={handleSubmit}  action="#" method="POST" className="flex items-center justify-center h-full px-10 flex-col bg-[#fff]">
             <h1 className="text-[40px] font-bold mb-5">Log In</h1>
-            <span className="text-[12px]">Use your <label htmlFor="email">email</label> and <label htmlFor="password">password</label></span>
+            <span className="text-[12px] text-center">Use your <label htmlFor="email">email</label> and <label htmlFor="password">password</label></span>
               <div>
                 <div className="mt-2">
                   <input
@@ -103,6 +114,7 @@ const login = () => {
                     id="email"
                     name="email"
                     type="email"
+                    value={email}
                     autoComplete="email"
                     placeholder="Email"
                     required
@@ -111,19 +123,24 @@ const login = () => {
                 </div>
               </div>
 
-              <div>
-
+              <div className="relative">
                 <div className="mt-2">
                   <input
                       onChange={e => setPassword(e.target.value)}
                     id="password"
                     name="password"
-                    type="password"
+                    type={(showPassword === false) ? 'password' : 'text'}
+                    value={password}
                     autoComplete="current-password"
                     placeholder="Password"
                     required
-                    className=" bg-[#eee] border-none my-2 px-4 py-3 text-sm rounded-md w-full outline-none"
+                    className={` bg-[#eee] border my-2 px-4 py-3 text-sm rounded-md w-full outline-none ${notify.error ? 'border-red-500' : 'border-transparent'}`}
                   />
+                  <div className="absolute top-8 right-4 cursor-pointer hover:bg-[#bfc5da] hover:rounded">
+                    {
+                      (showPassword === false) ? <PiEyeClosedDuotone onClick={handleShowPassword}/> : <PiEyeBold onClick={handleShowPassword}/>
+                    }
+                  </div>
                 </div>
                 {info}
               </div>
@@ -131,7 +148,7 @@ const login = () => {
               <div>
                 <button
                   type="submit"
-                  className="bg-[#512da8] text-[#fff] text-xs md:text-sm px-12 py-2 border-transparent rounded-md font-semibold uppercase tracking-wide mt-4 cursor-pointer hover:text-[#0F0F0F] hover:shadow-md hover:shadow-[#000]"
+                  className="bg-[#512da8] text-[#fff] text-xs md:text-sm px-12 py-2 border-transparent rounded-md font-semibold uppercase tracking-wide mt-4 cursor-pointer hover:text-[#0a8852] hover:shadow-md hover:shadow-[#0a8852]"
                 >
                   Sign in
                 </button>
@@ -144,7 +161,7 @@ const login = () => {
               <h1 className="text-[30px] font-bold">Hello,</h1>
               <p className="text-[14px] leading-[20px] tracking-[0.3px] my-5">If you forgot your authentication don't worry</p>
               <Link to="/forgot-password">
-                <button className="bg-transparent bg-[#512da8] text-[#fff] text-xs md:text-sm px-12 py-2 border border-[#f8f4f4] border-transparent rounded-md font-semibold uppercase tracking-wide mt-4 cursor-pointer hover:text-[#000] hover:border-[#EEE] hover:shadow-xl">Forgot Password</button>
+                <button className="bg-transparent bg-[#512da8] text-[#fff] text-xs md:text-sm px-12 py-2 border border-[#f8f4f4] border-transparent rounded-md font-semibold uppercase tracking-wide mt-4 cursor-pointer hover:text-[#0A8852] hover:border-[#EEE] hover:shadow-xl">Forgot Password</button>
               </Link>
             </div>
           </div>
