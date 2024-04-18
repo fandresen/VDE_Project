@@ -3,47 +3,47 @@ import axios from "axios";
 axios.defaults.baseURL = 'http://localhost:2024/api';
 axios.defaults.withCredentials = true;
 
-axios.interceptors.response.use(resp => resp, async error => {
-    if(error.response.status === 401) {
-        const response = await axios.post('/auth/refresh', {});
+// control variable for token refresh
+let isRefreshing = false;
+// Queue for failed requests
+let failedRequestQueue: (() => void) [] = [];
 
-        if (response.status === 200) {
-            return axios(error.config)
+axios.interceptors.response.use(resp => resp, async error => {
+    if(error.response?.status === 401 && !error.config._retry) {
+        if (isRefreshing) {
+            // add the fail request at the queue
+            return new Promise(resolve => {
+                failedRequestQueue.push(() => {
+                    resolve(axios(error.config));
+                })
+            })
+        }
+
+        // Mark the request as already retry
+        error.config._retry = true;
+
+        try{
+            isRefreshing = true; // Mark the refresh in line
+
+            // make the request of refresh token
+            const response = await axios.post('/auth/refresh', {});
+            if (response.status === 200) {
+                // if the refresh is success, trie the fail request and trash the queue
+                failedRequestQueue.forEach(callback => callback());
+                failedRequestQueue = [];
+                return axios(error.config)
+            }
+        } catch (refreshError) {
+            // handle the refresh token error
+            console.error("Error refreshing token:", refreshError);
+            // reject the error
+            return Promise.reject(refreshError);
+        } finally {
+            // mark the refresh like finish
+            isRefreshing = false;
         }
     }
 
-    return error;
+    // reject the error if it is not 401 or if the refresh fail another
+    return Promise.reject(error);
 })
-
-// let isRefreshing = false;
-// let failedRequestQueue: (() => void) [] = [];
-
-// axios.interceptors.response.use(response => response, async (error: AxiosError) => {
-//     const originalRequest = error.config;
-//     if(error.response?.status === 401 && isRefreshing && originalRequest) {
-//         isRefreshing = true;
-
-//         try{
-//             // send the new request POST in the refresh URL for get a new token
-//             const response = await axios.post('refresh', {}, {withCredentials: true});
-
-//             if(response.data) {
-//                 // if the auth token refresh request is successful
-//                 axios.defaults.headers.common['Authorization'] = `Bearer ${response.data.token}`;
-//                 isRefreshing = false;
-//                 failedRequestQueue.forEach(callback => {
-//                     return callback();
-//                 });
-//                 failedRequestQueue = [];
-//                 return axios(originalRequest);
-//             }
-//         } catch (refreshError) {
-//             console.error("Failed to refresh token:", refreshError);
-//         } finally {
-//             isRefreshing = false;
-//         }
-//     }
-
-//     // return error if the status is 401 or the auth token refresh request is successful
-//     return Promise.reject(error);
-// })
