@@ -36,10 +36,10 @@ const login = () => {
           const {data, status, headers} = await axios.post('/auth/login', {
               email,
               password
-          }, {withCredentials: true});
+          });
 
-          axios.defaults.headers.common['Authorization'] = `Bearer ${data.token}`;
-
+         // axios.defaults.headers.common['Authorization'] = `Bearer ${data.token}`;
+         
           setNotify({
             show: true,
             error: false,
