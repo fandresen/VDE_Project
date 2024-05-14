@@ -1,0 +1,18 @@
+L'elaboration de la roadmap à suivre pour le web app: la technologie utilisé, la language de programmation à la fois front-end et back-end et l'architcture adapté à la web app. les technologie utilisées sont GIT, Docker, VsCode, ... la language de programation est TypeScript pour le front et back. avec le back on utilise le framework Express Ts et pour le front c'est le library React Ts. et l'architecture adapté a l'application est front back.
+
+La spécification technique qui décrit en détail la caractéristique de l'application. Elle défini les exigences que doit respecter afin de répondre au besoin de l'application.
+
+avant de codé j'ai fait la modialisation de la base de données avec UML. J'ai utilisé un container docker MariaDb pour gérer la base de données plus rapidement.
+pour le back-end j'ai commencé l'installation des prérequis et la mettre en place des midlewares. puis la mise en place de la base de données avec un ORM TypeORM. Ensuite j'ai effectué des services web REST qui permetant aux applications de communiquer entre elles en Utilisant du protocole HTTP. j'ai utilisé POSTMAN pour faire la teste de la requête HTTP. Ainsi, j'ai effectué la sécurité de l'authentification et l'autorisation en adaptant avec JWT pour la sécurisation de l'authentification. dans la sécurisation j'ai pu effectué une double authentification avec Google authentificator de google et une authentification avec google.
+
+a inclure(API, Aouth2)
+
+le front-end est développé par ReactTs et TailwindCss j'ai commencé par la mise en place de l'authentification en mis en place de l'UI et UX. j'ai effectué aussi la gérance des cookies avec l'authentification. le design c'est Web 2+ et on n'oublie pas la conception Réactive qui peut s'adapté à différentes tailles de l'écran sur tout les pages. J'ai utilisé Axios pour effectué des requêtes HTTP depuis le back-end.
+
+la gestion des versionning est fait par GIT.
+
+
+
+Automatisation, integration de données AirCall vers la Base de données
+- l'application à été seulement conçu par du Back-end développé par JavaScript. tout d'abord j'ai utilisé un container docker MySQL pour gérer la base de données. tout se commence par l'installation des prérequis et la mettre en place des midlewares. puis la mise en place de la base de données avec un ORM Sequelize. l'application est déloyer dans un server et j'ai la tache de mettre les données Aircall dans l'application dans le server via SFTP.
+

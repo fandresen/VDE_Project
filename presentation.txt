@@ -1,0 +1,5 @@
+Bonjour je m'appel Ali Nando, actuelement je suis un alternant dans le domaine informatique depuis 8mois tout en étudiant à l'université CNTEMAD qui suis une enseignement à distance. Je viens de finir mon examen de Licence et j'attends les résutats avec impacience. Mon objéctif est de devenir développeur web full stack. avec mon expéricence chez Mada-Etech combiné de mon étude universitaire m'as permis d'acquérir une expertise théorique est pratique qui permet d'atteindre cette objectif.
+
+L'application donne une solution innovante pour un processus de cabinet de recrutement. en automatisant les taches des 4 utilisateurs.
+
+Extracteur: la manière de travailler les extracteur c'est de parcourir dans un CV Tech et d'extraire les cv du prospect

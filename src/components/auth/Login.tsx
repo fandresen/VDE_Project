@@ -31,7 +31,7 @@ const login = () => {
         e.preventDefault();
 
         setPassword('');
-
+        
         try {
           const {data, status, headers} = await axios.post('/auth/login', {
               email,
@@ -49,11 +49,11 @@ const login = () => {
           // check if the connexion is success
           if (status === 200) {
             dispatch(setAuth(true));
-            console.log('Mot kely', headers['access_token']);
+            console.log('Mot kely', headers?.hasOwnPropery('access_token'));
             
           } else {
             console.error("Error during login", data);
-          
+            
           }
         } catch (e) {
           console.error ("Network error during login:", e);
