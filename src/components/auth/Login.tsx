@@ -15,7 +15,7 @@ import { PiEyeClosedDuotone, PiEyeBold } from "react-icons/pi";
 
 const login = () => {
     const dispatch = useDispatch();
-    const isAuthenticated = useSelector((state: RootState) => state.auth.value);
+    const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -33,10 +33,13 @@ const login = () => {
         setPassword('');
         
         try {
-          const {data, status, headers} = await axios.post('/auth/login', {
+          const {data, status } = await axios.post('/auth/login', {
               email,
               password
           });
+
+          
+          
 
          // axios.defaults.headers.common['Authorization'] = `Bearer ${data.token}`;
          
@@ -49,7 +52,6 @@ const login = () => {
           // check if the connexion is success
           if (status === 200) {
             dispatch(setAuth(true));
-            console.log('Mot kely', headers?.hasOwnPropery('access_token'));
             
           } else {
             console.error("Error during login", data);

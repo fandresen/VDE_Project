@@ -1,8 +1,7 @@
 import { useDispatch,  } from "react-redux"
-// import { RootState } from "../../redux/store";
-import { useEffect, useState, } from "react";
+import { useEffect } from "react";
 import axios from "axios";
-import { setAuth } from "../../redux/authSlice";
+import { setAuth, setUserRole } from "../../redux/authSlice";
 import { useNavigate } from "react-router-dom";
 import Cookies from 'js-cookie';
 
@@ -10,6 +9,9 @@ import Header from "./Header";
 import { MdOutlineNotStarted } from "react-icons/md";
 import ExtractorHome from './ExtractorHome';
 import { jwtDecode} from "jwt-decode"; // for decoded the JWT token
+import SourcingHome from "./SourcingHome";
+import { useSelector } from "react-redux";
+import { RootState } from "../../redux/store";
 
 interface HomeProps {
   isOpen: boolean;
@@ -23,58 +25,53 @@ interface DecodedToken {
 const Home: React.FC<HomeProps> = ({isOpen, setIsOpen}) => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    // const [isProfil, setIsProfil] = useState('')
-    // const auth = useSelector((state: RootState) => state.auth.value);
-
-    const [userRole, setUserRole] = useState('');
+    const userRole = useSelector((state: RootState) => state.auth.userRole);
 
     useEffect(() => {
+      // recover cookies
       const getRoleFromCookie = async () => {
+        // get Cookie
         const accessToken = Cookies.get('access_token');
+        console.log(accessToken);
 
-        console.log('accessToken: ', Cookies.get("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjIsImZpcnN0X25hbWUiOiJJbGEiLCJyb2xlIjoiU1VQRVJWSVNPUiIsImlhdCI6MTcxNTY2ODc2MCwiZXhwIjoxNzE2MjczNTYwfQ.nqYkwZOaXSpVJgsvt6dPAN1pLXtAoP5Cl-2P3HIIO-w"));
         if(accessToken) {
           try {
             const decodedToken = jwtDecode<DecodedToken>(accessToken);
-            setUserRole(decodedToken.role)
+            dispatch(setUserRole(decodedToken.role));
             console.log('Decoded role:' ,decodedToken.role);
           } catch (error) {
             console.error('Error decoding token:', error);
           }
           
+        } else {
+          // if cookie don't exist we navigate in login
+          dispatch(setAuth(false));
+          navigate('/login');
         }
       }
-      
-      getRoleFromCookie();
-    }, [])
 
-    
+      getRoleFromCookie();
+    }, [dispatch, navigate])
 
     useEffect(() => {
       (async () => {
         try {
-          const { data } = await axios.get('/auth/user', {withCredentials: true});
+          const { data } = await axios.get('/auth/user');
           // setIsProfil(`${data.last_name} ${data.first_name}`);
           dispatch(setAuth(true));
           console.log(data);
         } catch (error) {
-          // setIsProfil('');
-          dispatch(setAuth(false));
-          // Rediriger vers la page de connexion
-          navigate("/login");
+          console.error('Error: ', error);
         }
       })();
     }, [dispatch, navigate]);
-  
 
-  
   return (
     <div className="p-0 m-0 bg-[#1E293B] h-screen w-full">
       <Header isOpen={isOpen} setIsOpen={setIsOpen} />
         <div className="flex items-center justify-center w-full min-h-[calc(100vh-96px)]">
-          <ExtractorHome/>
+          {userRole === 'EXTRACTOR' ? <ExtractorHome /> : <SourcingHome />}
           <div className="rounded-full w-[200px] h-[50px] flex justify-center items-center text-[20px]  text-green-400 bg-[#0F172A]  hover: cursor-pointer">
-            {userRole}
             <MdOutlineNotStarted className="size-10" />
             <span className="ml-5 text-green-400">Start</span>
           </div>
@@ -98,3 +95,4 @@ const Home: React.FC<HomeProps> = ({isOpen, setIsOpen}) => {
 }
 
 export default Home
+

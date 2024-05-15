@@ -5,6 +5,7 @@ import ForgotPassword from './components/auth/ForgotPassword';
 import Home from './components/home/Home'
 import { useMediaQuery } from 'react-responsive';
 import { useEffect, useState } from 'react';
+import ExtractorWork from './components/extractor/ExtractorWork';
 
 function App() {
   const isSmallScreen = useMediaQuery({maxWidth: 1023})
@@ -21,7 +22,7 @@ function App() {
         <Route path='/forgot-password' element={<ForgotPassword/>} />
         <Route path='/reset-password/:token' element={<ResetPassword/>} />
         <Route path='/' element={<Home isOpen={isOpen} setIsOpen={setIsOpen}/>}  />
-        
+        {/* <PrivateRoute path='/extractor' element={<ExtractorWork/>} /> */}
       </Routes>
     </BrowserRouter>
   )
