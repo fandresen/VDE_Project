@@ -96,7 +96,7 @@ const login = () => {
       }
     }, [isAuthenticated]);
 
-    // if submit
+    // if submit 
     if(isAuthenticated){
         return <Navigate to="/"/>
     }
@@ -113,14 +113,14 @@ const login = () => {
                 <div className="mt-2">
                   <input
                       onChange={e => setEmail(e.target.value)}
-                    id="email"
-                    name="email"
-                    type="email"
-                    value={email}
-                    autoComplete="email"
-                    placeholder="Email"
-                    required
-                    className=" bg-[#eee] border-none my-2 px-4 py-3 text-sm rounded-md w-full outline-none"
+                      id="email"
+                      name="email"
+                      type="email"
+                      value={email}
+                      autoComplete="email"
+                      placeholder="Email"
+                      required
+                      className=" bg-[#eee] border-none my-2 px-4 py-3 text-sm rounded-md w-full outline-none"
                   />
                 </div>
               </div>

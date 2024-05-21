@@ -1,30 +1,43 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import {  createBrowserRouter, RouterProvider } from 'react-router-dom'
 import Login from './components/auth/Login'
-import ResetPassword from './components/auth/ResetPassword'
-import ForgotPassword from './components/auth/ForgotPassword';
+// import ResetPassword from './components/auth/ResetPassword'
+// import ForgotPassword from './components/auth/ForgotPassword';
 import Home from './components/home/Home'
-import { useMediaQuery } from 'react-responsive';
-import { useEffect, useState } from 'react';
+import { RootState } from './redux/store';
+import { useSelector } from 'react-redux';
+import { useEffect } from 'react';
+
+
+
 // import ExtractorWork from './components/extractor/ExtractorWork';
 
 function App() {
-  const isSmallScreen = useMediaQuery({maxWidth: 1023})
-  const [isOpen, setIsOpen] = useState(!isSmallScreen);
+  const isDarkMode = useSelector((state: RootState) => state.mode.state);
+  const body = document.querySelector('body');
 
   useEffect(() => {
-    setIsOpen(!isSmallScreen);
-  }, [isSmallScreen])
+    if (isDarkMode) {
+      body?.classList.add('dark');
+    } else {
+      body?.classList.remove('dark');
+    }
+  }, [isDarkMode, body]);
+  
+
+  const router = createBrowserRouter([
+    {
+      path: '/',
+      element: <Home />,
+    },
+    {
+      path: '/login',
+      element: <Login />,
+    }
+
+  ])
 
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path='/login' element={<Login/>} />
-        <Route path='/forgot-password' element={<ForgotPassword/>} />
-        <Route path='/reset-password/:token' element={<ResetPassword/>} />
-        <Route path='/' element={<Home isOpen={isOpen} setIsOpen={setIsOpen}/>}  />
-        {/* <PrivateRoute path='/extractor' element={<ExtractorWork/>} /> */}
-      </Routes>
-    </BrowserRouter>
+   <RouterProvider router={router} />
   )
 }
 
