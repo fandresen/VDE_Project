@@ -5,7 +5,7 @@ import ForgotPassword from './components/auth/ForgotPassword';
 import Home from './components/home/Home'
 import { useMediaQuery } from 'react-responsive';
 import { useEffect, useState } from 'react';
-import ExtractorWork from './components/extractor/ExtractorWork';
+// import ExtractorWork from './components/extractor/ExtractorWork';
 
 function App() {
   const isSmallScreen = useMediaQuery({maxWidth: 1023})
