@@ -1,0 +1,9 @@
+@tailwind base;
+@layer base{
+    #label{
+        transition: top 0.3s ease-in-out;
+    }
+    #posteInput{
+        transition: hidden 0.3s ease-in-out;
+        }
+}
