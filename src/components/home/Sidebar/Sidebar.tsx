@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import SidebarExtractor from "../../extractor/Sidebar/Sidebar";
+import SidebarAdmin from "../../Admin/Sidebar/SidebarAdmin";
 
 
 export default function Sidebar() {
-
   const [isOpen, setIsOpen] = useState(false);
+  const roleUser = "ADMIN"
   
 
   useEffect(() => {
@@ -25,9 +26,18 @@ export default function Sidebar() {
 
   const classname = isOpen ? 'w-96' : 'w-28';
 
-  return (
-    <aside className={`hidden lg:block fixed h-screen bg-primary text-muted z-50 ${classname}`} id="sidebar"> 
-      <SidebarExtractor isOpen={isOpen}/>
-    </aside>
-  )
+  if (roleUser === "ADMIN") {
+    return (
+      <aside className={`hidden lg:block fixed h-screen bg-primary text-muted z-50 ${classname}`} id="sidebar"> 
+        <SidebarAdmin isOpen={isOpen}/>
+      </aside>
+    )
+  }else{
+    return (
+      <aside className={`hidden lg:block fixed h-screen bg-primary text-muted z-50 ${classname}`} id="sidebar"> 
+        <SidebarExtractor isOpen={isOpen}/>
+      </aside>
+    )
+  }
+
 }
