@@ -6,6 +6,8 @@ import Home from './components/home/Home'
 import { RootState } from './redux/store';
 import { useSelector } from 'react-redux';
 import { useEffect } from 'react';
+import AddNewUser from './components/Admin/AddNewUser/AddNewUser';
+import Admin from './components/Admin/Admin';
 
 
 
@@ -28,6 +30,16 @@ function App() {
     {
       path: '/',
       element: <Home />,
+      children: [
+        {
+          path: '/home',
+          element: <Admin />
+        },
+        {
+          path: '/add',
+          element: <AddNewUser />
+        }
+      ]
     },
     {
       path: '/login',
