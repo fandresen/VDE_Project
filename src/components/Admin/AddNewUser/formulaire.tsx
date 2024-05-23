@@ -1,4 +1,4 @@
-import { ChangeEvent, useState } from "react"
+import { ButtonHTMLAttributes, ChangeEvent, useRef, useState } from "react"
 import './formulaire.css'
 
 
@@ -8,12 +8,22 @@ const [posteValue,setPosteValue]=useState<string>("Poste")
 
 const [IsFocused,setIsfocused]=useState<boolean>(false)
 
-    const HandlePosteFocus =()=>{
+const AdminBtn= useRef<HTMLButtonElement>(null)
+AdminBtn.current?.addEventListener('click',()=>{
+    console.log('okeyyy');
+    setPosteValue('Admin')
+})
+
+const HandlePosteFocus =()=>{
         setIsfocused(true)
     }
-    const Unfocus =()=>{
+const Unfocus =()=>{
         setIsfocused(false)
     }
+const PosteInputHandle =(value:string)=>{
+    setPosteValue(value)
+}
+
 
     return (
       <>
@@ -25,13 +35,13 @@ const [IsFocused,setIsfocused]=useState<boolean>(false)
 
                     <div className="relative mt-9">
                         <img src="src/assets/icon/Vector 1.svg" alt="icon" className="absolute right-5 top-4 w-12 h-12"/>
-                        <input type="text" className="text-2xl text-primary font-medium p-4 w-[30vw] border-2 border-primary rounded-lg" value={posteValue} onFocus={HandlePosteFocus} onBlur={Unfocus}/>
+                        <input type="text" className="text-2xl text-primary font-medium p-4 w-[30vw] border-2 border-primary rounded-lg hover:cursor-pointer" value={posteValue} onFocus={HandlePosteFocus} onBlur={Unfocus}/>
                         <div className={`bg-[rgba(0,94,168,0.8)] absolute w-full z-10 rounded-xl ${IsFocused? '':'hidden'}`}  id="posteInput">
                             <ul className="text-2xl text-center">
-                                <li className="text-white">Admin</li>
-                                <li className="text-superviseur">Superviseur</li>
-                                <li className="text-extracteur">Extracteur</li>
-                                <li className="text-souricng">Sourcing</li>
+                                <li className="text-white hover:cursor-pointer mt-5"> <button ref={AdminBtn}>Admin</button></li>
+                                <li className="text-superviseur hover:cursor-pointer mt-5" ><button onClick={()=>PosteInputHandle('Superviseur')}>Superviseur</button></li>
+                                <li className="text-extracteur hover:cursor-pointer mt-5"><button onClick={()=>PosteInputHandle('Extracteur')}>Extracteur</button></li>
+                                <li className="text-souricng hover:cursor-pointer my-5"><button onClick={()=>PosteInputHandle('Sourcing')}>Sourcing</button></li>
                             </ul>
                         </div>
                     </div>
