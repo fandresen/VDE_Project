@@ -1,6 +1,6 @@
 import axios from "axios";
 
-axios.defaults.baseURL = 'http://localhost:2024/api';
+axios.defaults.baseURL = 'http://192.168.1.136:2024/api';
 axios.defaults.withCredentials = true;
 
 // control variable for token refresh
@@ -9,8 +9,10 @@ let isRefreshing = false;
 let failedRequestQueue: (() => void) [] = [];
 
 axios.interceptors.response.use(resp => resp, async error => {
+    
     if(error.response?.status === 401 && !error.config._retry) {
         if (isRefreshing) {
+            
             // add the fail request at the queue
             return new Promise(resolve => {
                 failedRequestQueue.push(() => {

@@ -1,22 +1,27 @@
-import { Link } from "react-router-dom";
+import LogoVde from "../../Others/LogoVde/LogoVde";
+import Logout from "../../Others/Logout/Logout";
+import Content from "./Content/Content";
 
 interface SidebarAdminProps {
-    isOpen: boolean;
+  isOpen: boolean;
 }
 
+export default function SidebarAdmin({ isOpen }: SidebarAdminProps) {
+  const classname = isOpen ? "w-80" : ""
 
-export default function SidebarAdmin({isOpen}: SidebarAdminProps) {
-
-    console.log(isOpen);
-    
   return (
-    <div>
-        <div>
-            <Link to="/home">Home</Link>
-        </div>
-        <div>
-            <Link to="/add">Home</Link>
-        </div>
+    <div
+      className={`h-full flex flex-col gap-8 justify-between py-8 items-start px-6`}
+    >
+      <div className="flex justify-center px-2">
+        <LogoVde />
+      </div>
+      <div className={`flex justify-center flex-col  gap-20 ${classname}`}>
+        <Content isOpen={isOpen} />
+      </div>
+      <div className="flex justify-center px-2">
+        <Logout isOpen={isOpen} />
+      </div>
     </div>
-  )
+  );
 }
