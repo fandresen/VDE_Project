@@ -1,20 +1,22 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 import { useEffect, useState } from "react"
 import axios from "axios"
-import { Link, Navigate } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import { useDispatch, useSelector } from "react-redux";
-import { setAuth } from "../../redux/authSlice";
+import { setAuth, setAccessToken } from "../../redux/authSlice";
 import { RootState } from "../../redux/store";
-import Cookies from 'js-cookie';
-import { jwtDecode } from 'jwt-decode';
+// import Cookies from 'js-cookie';
+// import { jwtDecode } from 'jwt-decode';
 
 import { FaCheckCircle, FaTimesCircle } from "react-icons/fa";
 import { PiEyeClosedDuotone, PiEyeBold } from "react-icons/pi";
+import { getToken } from "../../services/TokenServices";
 
 
 
 const login = () => {
     const dispatch = useDispatch();
+    const navigate = useNavigate()
     const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
 
     const [email, setEmail] = useState('');
@@ -33,13 +35,14 @@ const login = () => {
         setPassword('');
         
         try {
-          const {data, status } = await axios.post('/auth/login', {
+          const {data, status} = await axios.post('/auth/login', {
               email,
               password
-          });
-
-        console.log(data);
-         // axios.defaults.headers.common['Authorization'] = `Bearer ${data.token}`;
+          }, {withCredentials:true});
+          
+          dispatch(setAccessToken(data.accessToken))  
+          
+        //  axios.defaults.headers.common['Authorization'] = `Bearer ${data.token}`;
          
           setNotify({
             show: true,
@@ -82,22 +85,20 @@ const login = () => {
     useEffect(() => {
       console.log(isAuthenticated);
       if (isAuthenticated) {
-        const accessToken = Cookies.get('access_token');
-        console.log(accessToken);
+        const accessToken = getToken()
+        
         if(accessToken) {
           // decode the access token for get the user information
-          const decoded: { email: string; first_name: string } = jwtDecode(accessToken);
-          // const { email, first_name } = jwtDecode(accessToken);
-          console.log('Email:', decoded.email);
-          console.log('First Name:', decoded.first_name);
+          // const decoded: { email: string; first_name: string } = jwtDecode(accessToken);
+          // // const { email, first_name } = jwtDecode(accessToken);
+          // console.log('Email:', decoded.email);
+          // console.log('First Name:', decoded.first_name);
         }
+        navigate("/home")
       }
-    }, [isAuthenticated]);
+    }, [isAuthenticated, navigate]);
 
-    // if submit 
-    if(isAuthenticated){
-        return <Navigate to="/"/>
-    }
+   
 
   return (
     <div className="flex items-center justify-center
