@@ -38,9 +38,7 @@ const login = () => {
               password
           });
 
-          console.log(data);
-          
-
+        console.log(data);
          // axios.defaults.headers.common['Authorization'] = `Bearer ${data.token}`;
          
           setNotify({
