@@ -18,16 +18,16 @@ const refreshToken = async() => {
     isRequest = true;
     try {
             const token = getToken();
-            console.log("ACTUAL TOKEN: " + token);
+            //console.log("ACTUAL TOKEN: " + token);
             
             const response =  await axios.post('/auth/refresh', {}, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
             });
-            console.log("TOKEN REFRESHED :", response.data.accessToken);
+            //console.log("TOKEN REFRESHED :", response.data.accessToken);
             setToken(response.data.accessToken);
-            console.log("NOW THE ACTUAL TOKEN IS", getToken());
+            //console.log("NOW THE ACTUAL TOKEN IS", getToken());
     } catch (error) {
         console.error('Erreur lors du rafraîchissement du token:', error);
         throw error;
@@ -37,20 +37,18 @@ const refreshToken = async() => {
 
 if(isRefreshing){
     const token = getToken();
-    console.log("token", token);
-    
     if (token === ''){
-        console.log("NOT LOGGED IN, NO TOKEN REFRESH");
+        //console.log("NOT LOGGED IN, NO TOKEN REFRESH");
     } else {
-        console.log("LOGGED AND REFRESH, ASKING FOR A NEW TOKEN");            
+        //console.log("LOGGED AND REFRESH, ASKING FOR A NEW TOKEN");            
         refreshToken()
     }
 }
 
 axios.interceptors.response.use((resp) => {
-    console.log("RESPONSE", resp);
+    //console.log("RESPONSE", resp);
     if (resp.data.message === "Login successful"){
-        console.log("I'S A LOGIN RESPONSE");
+        //console.log("I'S A LOGIN RESPONSE");
         return resp
     }
     
@@ -59,13 +57,13 @@ axios.interceptors.response.use((resp) => {
         isRequest = false
         return resp
     } else {
-        console.log("ASKING FOR A TOKEN REFRESH");  
+        //console.log("ASKING FOR A TOKEN REFRESH");  
          refreshToken()     
     }   
     
     return resp;
 }, error => {
-    console.log("REQUEST ERROR: " + error);
+    //console.log("REQUEST ERROR: " + error);
     isRequest = true;
     isRefreshing = false;
     return Promise.reject(error);

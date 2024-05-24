@@ -8,7 +8,7 @@ export const getToken = () => {
   for (let i = 0; i < cookies.length; i++) {
     const cookie = cookies[i].trim();
     if (cookie.startsWith('accessToken=')) {
-      console.log(cookie.substring('accessToken='.length, cookie.length));
+      // console.log(cookie.substring('accessToken='.length, cookie.length));
       
       return cookie.substring('accessToken='.length, cookie.length);
     }
@@ -19,7 +19,7 @@ export const getToken = () => {
 };
 
 export const setToken = (accessToken:string) => {
-  console.log("SET THE TOKEN STATE TO :", accessToken);
+  // console.log("SET THE TOKEN STATE TO :", accessToken);
   document.cookie = `accessToken=${accessToken}; path=/`;
   store.dispatch(setAccessToken(accessToken));
   store.dispatch(setAuth(true))
