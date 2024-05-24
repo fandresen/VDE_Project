@@ -1,15 +1,31 @@
+import axios from "axios";
 // import { useState } from "react";
 // import Modal from "./PopUp";
 import FormulaireInsertionUser from "./formulaire";
+import { getToken } from "../../../services/TokenServices";
+import { useEffect } from "react";
 
 
-export default function AddNewUser() {
+ function AddNewUser() {
+  const token = getToken()
+  console.log(token);
+  
+    useEffect(() => {
+      async () => {
+        const data = await axios.get('/admin/list-users', {
+          headers: {
+            Authorization: `Bearer ${token}`
+        }
+        });
+      }
+    }, [token])
+    
 
   // const [showModal, setShowModal] = useState(false);
 
-  const handleOpenModal = () => {
-    setShowModal(true);
-  };
+  // const handleOpenModal = () => {
+  //   setShowModal(true);
+  // };
 
   return (
     <>
@@ -28,3 +44,5 @@ export default function AddNewUser() {
     </>
   )
 }
+
+export default AddNewUser
