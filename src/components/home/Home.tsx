@@ -4,14 +4,13 @@ import { useEffect } from "react";
 import Content from "./Content/Content";
 import Navbar from "./Navbar/Navbar";
 import Sidebar from "./Sidebar/Sidebar";
-import Cookies from 'js-cookie';
 import { jwtDecode } from "jwt-decode";
 import { useDispatch } from "react-redux";
-import { setAuth, setUserRole } from "../../redux/authSlice";
+import {  setUserRole } from "../../redux/authSlice";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
-import { useSelector } from "react-redux";
+import { getToken } from "../../services/TokenServices";
 import { RootState } from "../../redux/store";
+import { useSelector } from "react-redux";
 // import axios from "axios";
 
 
@@ -24,20 +23,18 @@ interface DecodedToken {
 export default function Home() {
   const dispatch = useDispatch()
   const navigate = useNavigate();
-  const accessToken = useSelector((state: RootState) => state.auth.accessToken);
-
+  const accessToken = getToken()
+  const isAuthenticated  = useSelector((state: RootState) => state.auth.isAuthenticated)
 
   useEffect(() => {
     // recover cookies
+    console.log(isAuthenticated);
+    
     const getRoleFromCookie = async () => {
-      // get Cookie
-      // console.log("token:"+accessToken);
-
-      if(accessToken) {
+      if(isAuthenticated) {
         try {
           const decodedToken = jwtDecode<DecodedToken>(accessToken);
           dispatch(setUserRole(decodedToken.role));
-          // console.log('Decoded role:' ,decodedToken.role);
         } catch (error) {
           console.error('Error decoding token:', error);
         }
@@ -52,7 +49,7 @@ export default function Home() {
 
 
  
-  }, [dispatch, navigate])
+  }, [dispatch, navigate, accessToken, isAuthenticated])
 
   // useEffect(() => {
   //   (async () => {

@@ -1,7 +1,29 @@
 import { BiEdit } from "react-icons/bi";
 import { CgProfile } from "react-icons/cg";
+import axios from "axios";
+import { useEffect } from "react";
+import { getToken } from "../../../services/TokenServices";
+
 
 export default function ListUser() {
+  const token = getToken()
+
+  useEffect(() => {
+   
+    axios.get('/admin/list-users', {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    })
+    .then(response => {
+      const data = response.data;
+      console.log(data);
+    })
+    .catch(error => {
+      console.error('Error fetching data:', error);
+    });
+    
+  }, [token])
   return (
     <div className="relative overflow-x-auto">
       <table className="w-full text-xl text-left rtl:text-right text-gray-500 dark:text-gray-400">
