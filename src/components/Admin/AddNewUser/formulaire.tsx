@@ -1,18 +1,17 @@
 import {useState } from "react"
 import './formulaire.css'
-import axios from "axios"
+import axios, { Axios } from "axios"
 import { SelectChangeEvent } from "@mui/material";
 
 const emailRegex = "/^[^\s@]+@[^\s@]+\.[^\s@]+$/";
 
 interface dataFormT {
-    first_name : string,
-    last_name : string,
-    email : string,
-    password : string,
+    first_name : string;
+    last_name : string;
+    email : string;
+    password : string;
     role : string
 }
-
 
 export default function FormulaireInsertionUser() {
 
@@ -84,10 +83,12 @@ export default function FormulaireInsertionUser() {
           role:formValues.poste
         })   
 
-        axios.post('/api/admin/new-user',formValues)
-        .then(res=>{
+        axios.post('/admin/new-user',formValues)
+        .then(res =>{
           setConnexErr(false)
-
+          if (res.status === 200) {
+            console.log(res.id)
+          }
           if (res.status === 409) {
             setemailValid(false)
           }

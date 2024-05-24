@@ -7,13 +7,9 @@ export default function AddNewUser() {
 
   // const [showModal, setShowModal] = useState(false);
 
-  // const handleOpenModal = () => {
-  //   setShowModal(true);
-  // };
-
-  // const handleCloseModal = () => {
-  //   setShowModal(false);
-  // };
+  const handleOpenModal = () => {
+    setShowModal(true);
+  };
 
   return (
     <>
@@ -27,7 +23,7 @@ export default function AddNewUser() {
       >
         Open Modal
       </button>
-      <Modal show={showModal} onClose={handleCloseModal} />
+      <Modal show={showModal}/>
     </div> */}
     </>
   )

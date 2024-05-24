@@ -1,6 +1,6 @@
 import axios from "axios";
 
-axios.defaults.baseURL = 'http://192.168.1.136:2024/';
+axios.defaults.baseURL = 'http://192.168.1.136:2024/api/';
 axios.defaults.withCredentials = true;
 
 // control variable for token refresh
