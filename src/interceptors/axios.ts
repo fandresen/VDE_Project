@@ -1,14 +1,10 @@
 // npm install axios
 
-<<<<<<< HEAD
-axios.defaults.baseURL = 'http://192.168.1.136:2024/api/';
-=======
 import axios from 'axios';
 import { getToken, setToken } from '../services/TokenServices';
 
 // Créer une instance d'Axios
 axios.defaults.baseURL = 'http://192.168.1.136:2024/api';
->>>>>>> 76a4df2b7ad23c312c6868f0d9bb4661ac4d3ce5
 axios.defaults.withCredentials = true;
 
 // Variable pour suivre si une requête de rafraîchissement est en cours
