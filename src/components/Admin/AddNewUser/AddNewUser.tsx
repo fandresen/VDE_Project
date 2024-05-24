@@ -17,7 +17,7 @@ export default function AddNewUser() {
 
   return (
     <>
-      <h1 className=" text-4xl xl:text-6xl text-primary font-bold text-center mt-[2vh]">Créer un nouveau Utilisateur</h1>
+      <h1 className=" text-[7vh] text-primary font-bold text-center mt-[2vh]">Créer un nouveau Utilisateur</h1>
       <FormulaireInsertionUser/>
 
       {/* <div className="flex items-center justify-center">

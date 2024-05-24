@@ -19,6 +19,7 @@ export default function FormulaireInsertionUser() {
     const [dataForm,setDataForm] = useState<dataFormT>()
     const [samePsswd,setSamePsswd]=useState<boolean>(true)
     const [emailValid,setemailValid]=useState<boolean>(true)
+    const [connexErr,setConnexErr] = useState<boolean>(false)
 
     const [formValues, setFormValues] = useState({
         email: '',
@@ -81,12 +82,33 @@ export default function FormulaireInsertionUser() {
           last_name:formValues.prenom,
           password:formValues.conf_psswd,
           role:formValues.poste
-        })
+        })   
 
-        setTimeout(()=>console.log(dataForm),5000)
-        
+        axios.post('/api/admin/new-user',formValues)
+        .then(res=>{
+          setConnexErr(false)
+
+          if (res.status === 409) {
+            setemailValid(false)
+          }
+          console.log(res);
           
-        } else {
+        })
+        .catch(error=>{
+          console.log(error);
+          setConnexErr(true)
+          setFormValues({
+            email:'',
+            prenom:'',
+            nom:'',
+            poste:'',
+            psswd:'',
+            conf_psswd:''
+          })
+          
+        })
+        }
+         else {
           console.log('Form not submitted. Please fill all fields.');
         }
       };
@@ -94,7 +116,11 @@ export default function FormulaireInsertionUser() {
 
     return (
       <>
-        <div className="h-[80vh] xl:h-[70vh] w-[80vw] bg-white mx-auto mt-10 pt-[3vh] rounded-3xl shadow-lg shadow-black90">
+      {
+        connexErr? <div className="bg-red-700 rounded-lg py-3 w-[50vw] mx-auto"><h1 className="text-white text-2xl text-center font-bold"><img src="src/assets/icon/warning.svg" alt="error" className="w-8 inline-block mr-3 mb-2 text-white" />Une erreur s'est produite veuillez réssayer</h1></div>:''
+
+      }
+        <div className="h-auto w-[80vw] pb-8 bg-white mx-auto mt-[3vh] pt-[3vh] rounded-3xl shadow-lg shadow-black90">
             <form className="" onSubmit={handleSubmit} name="createuserForm">
 
                 <div className="flex gap-24 justify-center">
@@ -119,8 +145,8 @@ export default function FormulaireInsertionUser() {
                     <InputC placeholder={'Mot de passe'} type={'password'} name={'psswd'} erreur={!samePsswd} onChange={handleInputChange} value={formValues.psswd}/>
                     <InputC placeholder={'Confirmer mot de passe'} type={'password'} name={'conf_psswd'} erreur={!samePsswd} onChange={handleInputChange} value={formValues.conf_psswd}/>
                 </div>       
-                <h1 className={`text-red-600 text-xl ml-[8vw] mt-2 ${samePsswd?'hidden':''}`}>Mot depasse et Confirmer mot depasse ne se ressemble pas</h1>
-                <div className="mt-16 text-center">
+                <h1 className={`text-red-600 text-xl ml-[8vw] mt-2 ${samePsswd?'hidden':''}`}>Mot de passe et Confirmer mot de passe ne se ressemble pas</h1>
+                <div className="mt-[4vh] text-center">
                     <button className="text-4xl font-bold py-[2vh] px-36 text-primary border-[5px] border-secondary rounded-2xl hover:bg-sky-100 disabled:text-gray-500  disabled:border-gray-400 disabled:hover:cursor-not-allowed"disabled={!formValid}>Créer</button>
                 </div>
          
