@@ -1,22 +1,20 @@
-import {useState } from "react"
+import {useEffect, useState } from "react"
 import './formulaire.css'
-import axios from "axios"
+import axios, { Axios } from "axios"
 import { SelectChangeEvent } from "@mui/material";
 
 const emailRegex = "/^[^\s@]+@[^\s@]+\.[^\s@]+$/";
 
 interface dataFormT {
-    first_name : string,
-    last_name : string,
-    email : string,
-    password : string,
+    first_name : string;
+    last_name : string;
+    email : string;
+    password : string;
     role : string
 }
 
-
 export default function FormulaireInsertionUser() {
 
-    const [dataForm,setDataForm] = useState<dataFormT>()
     const [samePsswd,setSamePsswd]=useState<boolean>(true)
     const [emailValid,setemailValid]=useState<boolean>(true)
     const [connexErr,setConnexErr] = useState<boolean>(false)
@@ -31,6 +29,17 @@ export default function FormulaireInsertionUser() {
       });
     
       const [formValid, setFormValid] = useState(false);
+
+      useEffect(()=>{
+          setFormValues({
+              email:'',
+              prenom:'',
+              nom:'',
+              poste:'',
+              psswd:'',
+              conf_psswd:''
+          })
+      },[connexErr])
     
       const handleInputChange = (name: string, value: string) => {
     setFormValues((prevValues) => {
@@ -38,8 +47,9 @@ export default function FormulaireInsertionUser() {
 
       // Vérifiez si tous les champs ne sont pas vides
       const isValid = Object.values(newValues).every((val) => val.trim() !== '');
-      setSamePsswd(true);
+      console.log(newValues);
       
+      setSamePsswd(true)
       if (newValues.conf_psswd !=="") {
         if (newValues.psswd===newValues.conf_psswd) {
         setFormValid(isValid); 
@@ -59,52 +69,63 @@ export default function FormulaireInsertionUser() {
 
        const isValid = Object.values(newValues).every((val) => val.trim() !== '');
        setFormValid(isValid)
+       console.log(newValues);
+       
       return newValues;
     });
     
-  }                       
-    
-      const handleSubmit = (e) => {
-        e.preventDefault();
-        
-        // Soumettez le formulaire uniquement si il est valide
-        if (formValid) {
-          // Faites quelque chose avec les données du formulaire
-          // const data = {...dataForm}
-          // data.email = formValues.email;
-          // data.first_name = formValues.nom;
-          // data.last_name = formValues.prenom;
-          // data.password = formValues.conf_psswd;
-          // data.role = formValues.poste;
-          setDataForm({
+  }      
+  
+      const changerdataForm=()=>{
+        const dataForm : dataFormT= {
           email:formValues.email,
           first_name:formValues.nom,
           last_name:formValues.prenom,
           password:formValues.conf_psswd,
           role:formValues.poste
-        })   
+        }
+        return dataForm
+      }
+     
+    
+const handleSubmit = (e) => {
+        e.preventDefault();
+        
+        // Soumettez le formulaire uniquement si il est valide
+        if (formValid) {
 
-        axios.post('/api/admin/new-user',formValues)
-        .then(res=>{
+          // const sendData= async ()=>{
+          //   try {
+          //     const response = await axios.post('/admin/new-user',changerdataForm());
+          //     if (response.status === 200) {
+          //       console.log(res.data.userid)
+          //     }
+          //   } catch (error) {
+              
+          //   }
+              
+              
+          // }
+          // sendData()
+        
+        axios.post('/admin/new-user',changerdataForm())
+        .then(res =>{
           setConnexErr(false)
-
-          if (res.status === 409) {
-            setemailValid(false)
+          if (res.status === 200) {
+            console.log(res.data.userid)
           }
           console.log(res);
           
         })
         .catch(error=>{
-          console.log(error);
-          setConnexErr(true)
-          setFormValues({
-            email:'',
-            prenom:'',
-            nom:'',
-            poste:'',
-            psswd:'',
-            conf_psswd:''
-          })
+          if (error.response.status == 409) {
+            setemailValid(false)
+            console.log('email efa ao');
+            
+          }
+          else setConnexErr(true);
+          console.log(error.response.status);
+            
           
         })
         }
@@ -120,6 +141,10 @@ export default function FormulaireInsertionUser() {
         connexErr? <div className="bg-red-700 rounded-lg py-3 w-[50vw] mx-auto"><h1 className="text-white text-2xl text-center font-bold"><img src="src/assets/icon/warning.svg" alt="error" className="w-8 inline-block mr-3 mb-2 text-white" />Une erreur s'est produite veuillez réssayer</h1></div>:''
 
       }
+      {
+        !emailValid? <div className="bg-red-700 rounded-lg py-3 w-[50vw] mx-auto"><h1 className="text-white text-2xl text-center font-bold"><img src="src/assets/icon/warning.svg" alt="error" className="w-8 inline-block mr-3 mb-2 text-white" />Il y a deja un compte utilisant cet email</h1></div>:''
+
+      }
         <div className="h-auto w-[80vw] pb-8 bg-white mx-auto mt-[3vh] pt-[3vh] rounded-3xl shadow-lg shadow-black90">
             <form className="" onSubmit={handleSubmit} name="createuserForm">
 
@@ -128,10 +153,10 @@ export default function FormulaireInsertionUser() {
 
                     <div className="relative mt-10">
                             <select className="text-2xl text-primary bg-white font-medium p-4 w-[30vw] border-2 border-primary rounded-lg hover:cursor-pointer" name="poste" onChange={handleSelectChange}>
-                                <option className="text-primary hover:cursor-pointer mt-5" value="admin"> Admin</option>
-                                <option className="text-secondary hover:cursor-pointer mt-5" value="superviseur">Superviseur</option>
-                                <option className="text-extracteur hover:cursor-pointer mt-5" value="extracteur">Extracteur</option>
-                                <option className="text-souricng hover:cursor-pointer my-5" value="sourcing">Sourcing</option>
+                                <option className="text-primary hover:cursor-pointer mt-5" value="ADMIN"> Admin</option>
+                                <option className="text-secondary hover:cursor-pointer mt-5" value="SUPERVISOR">Superviseur</option>
+                                <option className="text-extracteur hover:cursor-pointer mt-5" value="EXTRACTOR">Extracteur</option>
+                                <option className="text-souricng hover:cursor-pointer my-5" value="SOURCING">Sourcing</option>
                                 <option value="" className="text-primary hover:cursor-pointer my-5" disabled selected hidden>Poste</option>
                             </select>
                     </div>

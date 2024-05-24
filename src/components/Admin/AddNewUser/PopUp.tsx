@@ -5,10 +5,17 @@ interface ModalProps {
   onClose: () => void;
 }
 
-const Modal: React.FC<ModalProps> = ({ show, onClose }) => {
+const Modal: React.FC<ModalProps> = ({ show}) => {
+
+  const [showModal, setShowModal] = useState(true);
   const [code, setCode] = useState<string[]>(new Array(6).fill(""));
 
-  if (!show) return null;
+  const handleCloseModal = () => {
+    setShowModal(false);
+  };
+ 
+
+  if (!show || !showModal) return null;
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>, index: number) => {
     const value = e.target.value;
@@ -23,6 +30,11 @@ const Modal: React.FC<ModalProps> = ({ show, onClose }) => {
         if (nextInput) {
           nextInput.focus();
         }
+        
+      }
+      if (value !== "" && index === 5){
+        console.log(newCode);
+        handleCloseModal();
       }
     }
   };
@@ -34,6 +46,8 @@ const Modal: React.FC<ModalProps> = ({ show, onClose }) => {
       const lastInput = document.getElementById(`code-input-5`);
       if (lastInput) {
         lastInput.focus();
+        console.log(code);
+        handleCloseModal();
       }
     }
     e.preventDefault();
