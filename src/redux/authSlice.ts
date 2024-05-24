@@ -17,6 +17,8 @@ export const authSlice = createSlice ({
     initialState,
     reducers: {
         setAuth: (state, action: PayloadAction<boolean>) => {
+            console.log("set the state: " , action.payload);
+            
             state.isAuthenticated = action.payload;
         },
         setUserRole: (state, action:PayloadAction<string>) => {

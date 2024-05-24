@@ -2,20 +2,18 @@
 import { useEffect, useState } from "react"
 import axios from "axios"
 import { Link, useNavigate } from "react-router-dom"
-import { useDispatch, useSelector } from "react-redux";
-import { setAuth, setAccessToken } from "../../redux/authSlice";
+import { useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
 // import Cookies from 'js-cookie';
 // import { jwtDecode } from 'jwt-decode';
 
 import { FaCheckCircle, FaTimesCircle } from "react-icons/fa";
 import { PiEyeClosedDuotone, PiEyeBold } from "react-icons/pi";
-import { getToken } from "../../services/TokenServices";
+import { setToken } from "../../services/TokenServices";
 
 
 
 const login = () => {
-    const dispatch = useDispatch();
     const navigate = useNavigate()
     const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
 
@@ -39,8 +37,8 @@ const login = () => {
               email,
               password
           }, {withCredentials:true});
-          console.log(data);
-          dispatch(setAccessToken(data.accessToken))  
+
+        
           
         //axios.defaults.headers.common['Authorization'] = `Bearer ${data.token}`;
          
@@ -52,7 +50,8 @@ const login = () => {
 
           // check if the connexion is success
           if (status === 200) {
-            dispatch(setAuth(true));
+            setToken(data.accessToken)         
+            navigate("/home")
             
           } else {
             console.error("Error during login", data);
@@ -82,17 +81,8 @@ const login = () => {
         </div>
       }
 
-    useEffect(() => {
-      if (isAuthenticated) {
-        const accessToken = getToken()
-        
-        if(accessToken) {
-          // decode the access token for get the user information
-          // const decoded: { email: string; first_name: string } = jwtDecode(accessToken);
-          // // const { email, first_name } = jwtDecode(accessToken);
-          // console.log('Email:', decoded.email);
-          // console.log('First Name:', decoded.first_name);
-        }
+    useEffect(() => {    
+      if (isAuthenticated) {        
         navigate("/home")
       }
     }, [isAuthenticated, navigate]);

@@ -10,6 +10,8 @@ import { useDispatch } from "react-redux";
 import { setAuth, setUserRole } from "../../redux/authSlice";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { useSelector } from "react-redux";
+import { RootState } from "../../redux/store";
 // import axios from "axios";
 
 
@@ -22,13 +24,13 @@ interface DecodedToken {
 export default function Home() {
   const dispatch = useDispatch()
   const navigate = useNavigate();
+  const accessToken = useSelector((state: RootState) => state.auth.accessToken);
 
 
   useEffect(() => {
     // recover cookies
     const getRoleFromCookie = async () => {
       // get Cookie
-      const accessToken = Cookies.get('access_token');
       // console.log("token:"+accessToken);
 
       if(accessToken) {
@@ -42,7 +44,7 @@ export default function Home() {
         
       } else {
         // if cookie don't exist we navigate in login
-        dispatch(setAuth(false));
+        // dispatch(setAuth(false));
         navigate('/login');
       }
     }

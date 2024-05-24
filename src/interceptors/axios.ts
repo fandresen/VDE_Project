@@ -12,6 +12,7 @@ let isRefreshing = true;
 let isRequest = false;
 
 
+
 // Fonction pour effectuer la requête de rafraîchissement de token
 const refreshToken = async() => {
     isRequest = true;
@@ -32,6 +33,19 @@ const refreshToken = async() => {
         throw error;
     }
 };
+
+
+if(isRefreshing){
+    const token = getToken();
+    console.log("token", token);
+    
+    if (token === ''){
+        console.log("NOT LOGGED IN, NO TOKEN REFRESH");
+    } else {
+        console.log("LOGGED AND REFRESH, ASKING FOR A NEW TOKEN");            
+        refreshToken()
+    }
+}
 
 axios.interceptors.response.use((resp) => {
     console.log("RESPONSE", resp);
@@ -60,16 +74,8 @@ axios.interceptors.response.use((resp) => {
 
 
 // Log pour le rechargement de la page
-    window.addEventListener('load', () => {
-        if(isRefreshing){
-            const token = getToken();
-            if (token === ''){
-                console.log("NOT LOGGED IN, NO TOKEN REFRESH");
-            } else {
-                console.log("LOGGED AND REFRESH, ASKING FOR A NEW TOKEN");            
-                refreshToken()
-            }
-        }
-    });
+    // window.addEventListener('load', () => {
+        
+    // });
 
     export default axios;
