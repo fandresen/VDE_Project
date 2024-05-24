@@ -1,3 +1,4 @@
+import axios from "axios";
 import { setAccessToken, setAuth } from "../redux/authSlice";
 import { store } from "../redux/store";
 
@@ -24,3 +25,19 @@ export const setToken = (accessToken:string) => {
   store.dispatch(setAccessToken(accessToken));
   store.dispatch(setAuth(true))
 };
+
+export const verifyToken = (accessToken:string) => {
+  axios.get('/auth/user', {
+    headers: {
+      Authorization: `Bearer ${accessToken}`
+    }
+  })
+  .then(response => {
+    const data = response.data;
+    console.log(data);
+  })
+  .catch(error => {
+    console.error('Error fetching data:', error);
+  });
+  
+}

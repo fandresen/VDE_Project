@@ -31,7 +31,7 @@ export default function Home() {
     console.log(isAuthenticated);
     
     const getRoleFromCookie = async () => {
-      if(accessToken) {
+      if(isAuthenticated) {
         try {
           const decodedToken = jwtDecode<DecodedToken>(accessToken);
           dispatch(setUserRole(decodedToken.role));
