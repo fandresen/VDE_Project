@@ -1,51 +1,85 @@
-import axios from "axios";
+// npm install axios
 
+<<<<<<< HEAD
 axios.defaults.baseURL = 'http://192.168.1.136:2024/api/';
+=======
+import axios from 'axios';
+import { getToken, setToken } from '../services/TokenServices';
+
+// Créer une instance d'Axios
+axios.defaults.baseURL = 'http://192.168.1.136:2024/api';
+>>>>>>> 76a4df2b7ad23c312c6868f0d9bb4661ac4d3ce5
 axios.defaults.withCredentials = true;
 
-// control variable for token refresh
-let isRefreshing = false;
-// Queue for failed requests
-let failedRequestQueue: (() => void) [] = [];
+// Variable pour suivre si une requête de rafraîchissement est en cours
+let isRefreshing = true;
+let isRequest = false;
 
-axios.interceptors.response.use(resp => resp, async error => {
-    
-    if(error.response?.status === 401 && !error.config._retry) {
-        if (isRefreshing) {
+
+
+// Fonction pour effectuer la requête de rafraîchissement de token
+const refreshToken = async() => {
+    isRequest = true;
+    try {
+            const token = getToken();
+            console.log("ACTUAL TOKEN: " + token);
             
-            // add the fail request at the queue
-            return new Promise(resolve => {
-                failedRequestQueue.push(() => {
-                    resolve(axios(error.config));
-                })
-            })
-        }
-
-        // Mark the request as already retry
-        error.config._retry = true;
-
-        try{
-            isRefreshing = true; // Mark the refresh in line
-
-            // make the request of refresh token
-            const response = await axios.post('/auth/refresh', {});
-            if (response.status === 200) {
-                // if the refresh is success, trie the fail request and trash the queue
-                failedRequestQueue.forEach(callback => callback());
-                failedRequestQueue = [];
-                return axios(error.config)
-            }
-        } catch (refreshError) {
-            // handle the refresh token error
-            console.error("Error refreshing token:", refreshError);
-            // reject the error
-            return Promise.reject(refreshError);
-        } finally {
-            // mark the refresh like finish
-            isRefreshing = false;
-        }
+            const response =  await axios.post('/auth/refresh', {}, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+            console.log("TOKEN REFRESHED :", response.data.accessToken);
+            setToken(response.data.accessToken);
+            console.log("NOW THE ACTUAL TOKEN IS", getToken());
+    } catch (error) {
+        console.error('Erreur lors du rafraîchissement du token:', error);
+        throw error;
     }
+};
 
-    // reject the error if it is not 401 or if the refresh fail another
+
+if(isRefreshing){
+    const token = getToken();
+    console.log("token", token);
+    
+    if (token === ''){
+        console.log("NOT LOGGED IN, NO TOKEN REFRESH");
+    } else {
+        console.log("LOGGED AND REFRESH, ASKING FOR A NEW TOKEN");            
+        refreshToken()
+    }
+}
+
+axios.interceptors.response.use((resp) => {
+    console.log("RESPONSE", resp);
+    if (resp.data.message === "Login successful"){
+        console.log("I'S A LOGIN RESPONSE");
+        return resp
+    }
+    
+    isRefreshing = false;
+    if (isRequest) {
+        isRequest = false
+        return resp
+    } else {
+        console.log("ASKING FOR A TOKEN REFRESH");  
+         refreshToken()     
+    }   
+    
+    return resp;
+}, error => {
+    console.log("REQUEST ERROR: " + error);
+    isRequest = true;
+    isRefreshing = false;
     return Promise.reject(error);
-})
+});
+
+
+
+// Log pour le rechargement de la page
+    // window.addEventListener('load', () => {
+        
+    // });
+
+    export default axios;
