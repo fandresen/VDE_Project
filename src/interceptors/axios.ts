@@ -17,56 +17,59 @@ const refreshToken = async() => {
     isRequest = true;
     try {
             const token = getToken();
-            console.log(token);
+            console.log("ACTUAL TOKEN: " + token);
             
             const response =  await axios.post('/auth/refresh', {}, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
             });
-            console.log(response);
-            
-            console.log("demande du token ");
+            console.log("TOKEN REFRESHED :", response.data.accessToken);
+            setToken(response.data.accessToken);
+            console.log("NOW THE ACTUAL TOKEN IS", getToken());
     } catch (error) {
         console.error('Erreur lors du rafraîchissement du token:', error);
         throw error;
     }
 };
 
-axios.interceptors.response.use(resp => {
+axios.interceptors.response.use((resp) => {
+    console.log("RESPONSE", resp);
+    if (resp.data.message === "Login successful"){
+        console.log("I'S A LOGIN RESPONSE");
+        return resp
+    }
+    
     isRefreshing = false;
     if (isRequest) {
         isRequest = false
         return resp
     } else {
-        console.log("rafraichissement");
-        // refreshToken()
-        
-    }
-    console.log('une requette a ete effectue');
-
+        console.log("ASKING FOR A TOKEN REFRESH");  
+         refreshToken()     
+    }   
     
     return resp;
 }, error => {
+    console.log("REQUEST ERROR: " + error);
+    isRequest = true;
     isRefreshing = false;
-    console.error('Erreur lors de l\'envoi de la requête', error);
     return Promise.reject(error);
 });
 
 
 
 // Log pour le rechargement de la page
-window.addEventListener('load', () => {
-    if(isRefreshing){
-        console.log('La page a été rechargée');
-        const token = getToken();
-        if (token === ''){
-            console.log("Pas demande de token");
-        } else {
-            console.log("demande de token");
-            
+    window.addEventListener('load', () => {
+        if(isRefreshing){
+            const token = getToken();
+            if (token === ''){
+                console.log("NOT LOGGED IN, NO TOKEN REFRESH");
+            } else {
+                console.log("LOGGED AND REFRESH, ASKING FOR A NEW TOKEN");            
+                refreshToken()
+            }
         }
-    }
-});
+    });
 
-export default axios;
+    export default axios;

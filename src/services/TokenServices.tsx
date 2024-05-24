@@ -7,5 +7,6 @@ export const getToken = () => {
 };
 
 export const setToken = (accessToken:string) => {
+  console.log("SET THE TOKEN STATE TO :", accessToken);
   store.dispatch(setAccessToken(accessToken));
 };

@@ -39,10 +39,10 @@ const login = () => {
               email,
               password
           }, {withCredentials:true});
-          
+          console.log(data);
           dispatch(setAccessToken(data.accessToken))  
           
-        //  axios.defaults.headers.common['Authorization'] = `Bearer ${data.token}`;
+        //axios.defaults.headers.common['Authorization'] = `Bearer ${data.token}`;
          
           setNotify({
             show: true,
@@ -83,7 +83,6 @@ const login = () => {
       }
 
     useEffect(() => {
-      console.log(isAuthenticated);
       if (isAuthenticated) {
         const accessToken = getToken()
         
