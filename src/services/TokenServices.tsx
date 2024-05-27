@@ -32,10 +32,10 @@ export const verifyToken = (accessToken:string) => {
       Authorization: `Bearer ${accessToken}`
     }
   })
-  .then(response => {
-    const data = response.data;
-    console.log(data);
-  })
+  // .then(response => {
+  //   const data = response.data;
+  //   // console.log(data);
+  // })
   .catch(error => {
     console.error('Error fetching data:', error);
   });
