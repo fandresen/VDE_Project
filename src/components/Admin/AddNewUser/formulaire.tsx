@@ -1,37 +1,178 @@
-import {ChangeEvent, useState } from "react"
+import {useEffect, useState } from "react"
 import './formulaire.css'
+import axios, { Axios } from "axios"
+import { SelectChangeEvent } from "@mui/material";
 
+const emailRegex = "/^[^\s@]+@[^\s@]+\.[^\s@]+$/";
+
+interface dataFormT {
+    first_name : string;
+    last_name : string;
+    email : string;
+    password : string;
+    role : string
+}
 
 export default function FormulaireInsertionUser() {
+
+    const [samePsswd,setSamePsswd]=useState<boolean>(true)
+    const [emailValid,setemailValid]=useState<boolean>(true)
+    const [connexErr,setConnexErr] = useState<boolean>(false)
+
+    const [formValues, setFormValues] = useState({
+        email: '',
+        nom: '',
+        prenom: '',
+        psswd: '',
+        poste:'',
+        conf_psswd: '',
+      });
+    
+      const [formValid, setFormValid] = useState(false);
+
+      useEffect(()=>{
+          setFormValues({
+              email:'',
+              prenom:'',
+              nom:'',
+              poste:'',
+              psswd:'',
+              conf_psswd:''
+          })
+      },[connexErr])
+    
+      const handleInputChange = (name: string, value: string) => {
+    setFormValues((prevValues) => {
+      const newValues = { ...prevValues, [name]: value };
+
+      // Vérifiez si tous les champs ne sont pas vides
+      const isValid = Object.values(newValues).every((val) => val.trim() !== '');
+      console.log(newValues);
+      
+      setSamePsswd(true)
+      if (newValues.conf_psswd !=="") {
+        if (newValues.psswd===newValues.conf_psswd) {
+        setFormValid(isValid); 
+      }
+      else {
+        setSamePsswd(false)
+        setFormValid(false)
+      }    
+      }
+      return newValues;
+    });
+  };
+
+  const handleSelectChange = (e:SelectChangeEvent)=>{
+      setFormValues((prevValues) => {
+      const newValues = { ...prevValues, [e.target.name]: e.target.value };
+
+       const isValid = Object.values(newValues).every((val) => val.trim() !== '');
+       setFormValid(isValid)
+       console.log(newValues);
+       
+      return newValues;
+    });
+    
+  }      
+  
+      const changerdataForm=()=>{
+        const dataForm : dataFormT= {
+          email:formValues.email,
+          first_name:formValues.nom,
+          last_name:formValues.prenom,
+          password:formValues.conf_psswd,
+          role:formValues.poste
+        }
+        return dataForm
+      }
+     
+    
+const handleSubmit = (e) => {
+        e.preventDefault();
+        
+        // Soumettez le formulaire uniquement si il est valide
+        if (formValid) {
+
+          // const sendData= async ()=>{
+          //   try {
+          //     const response = await axios.post('/admin/new-user',changerdataForm());
+          //     if (response.status === 200) {
+          //       console.log(res.data.userid)
+          //     }
+          //   } catch (error) {
+              
+          //   }
+              
+              
+          // }
+          // sendData()
+        
+        axios.post('/admin/new-user',changerdataForm())
+        .then(res =>{
+          setConnexErr(false)
+          if (res.status === 200) {
+            console.log(res.data.userid)
+          }
+          console.log(res);
+          
+        })
+        .catch(error=>{
+          if (error.response.status == 409) {
+            setemailValid(false)
+            console.log('email efa ao');
+            
+          }
+          else setConnexErr(true);
+          console.log(error.response.status);
+            
+          
+        })
+        }
+         else {
+          console.log('Form not submitted. Please fill all fields.');
+        }
+      };
+ 
+
     return (
       <>
-        <div className="h-[80vh] xl:h-[70vh] w-[80vw] bg-white mx-auto mt-10 pt-[3vh] rounded-3xl shadow-lg shadow-black90">
-            <form className="">
+      {
+        connexErr? <div className="bg-red-700 rounded-lg py-3 w-[50vw] mx-auto"><h1 className="text-white text-2xl text-center font-bold"><img src="src/assets/icon/warning.svg" alt="error" className="w-8 inline-block mr-3 mb-2 text-white" />Une erreur s'est produite veuillez réssayer</h1></div>:''
+
+      }
+      {
+        !emailValid? <div className="bg-red-700 rounded-lg py-3 w-[50vw] mx-auto"><h1 className="text-white text-2xl text-center font-bold"><img src="src/assets/icon/warning.svg" alt="error" className="w-8 inline-block mr-3 mb-2 text-white" />Il y a deja un compte utilisant cet email</h1></div>:''
+
+      }
+        <div className="h-auto w-[80vw] pb-8 bg-white mx-auto mt-[3vh] pt-[3vh] rounded-3xl shadow-lg shadow-black90">
+            <form className="" onSubmit={handleSubmit} name="createuserForm">
 
                 <div className="flex gap-24 justify-center">
-                    <EmailInput placeholder={'email'}/>
+                    <InputC placeholder={'email'} type={'email'} name={'email'} erreur={!emailValid} onChange={handleInputChange} value={formValues.email} />
 
                     <div className="relative mt-10">
-                            <select className="text-2xl text-primary bg-white font-medium p-4 w-[30vw] border-2 border-primary rounded-lg hover:cursor-pointer" aria-placeholder="poste">
-                                <option className="text-primary hover:cursor-pointer mt-5" value="admin"> Admin</option>
-                                <option className="text-secondary hover:cursor-pointer mt-5" value="superviseur">Superviseur</option>
-                                <option className="text-extracteur hover:cursor-pointer mt-5" value="extracteur">Extracteur</option>
-                                <option className="text-souricng hover:cursor-pointer my-5" value="sourcing">Sourcing</option>
+                            <select className="text-2xl text-primary bg-white font-medium p-4 w-[30vw] border-2 border-primary rounded-lg hover:cursor-pointer" name="poste" onChange={handleSelectChange}>
+                                <option className="text-primary hover:cursor-pointer mt-5" value="ADMIN"> Admin</option>
+                                <option className="text-secondary hover:cursor-pointer mt-5" value="SUPERVISOR">Superviseur</option>
+                                <option className="text-extracteur hover:cursor-pointer mt-5" value="EXTRACTOR">Extracteur</option>
+                                <option className="text-souricng hover:cursor-pointer my-5" value="SOURCING">Sourcing</option>
                                 <option value="" className="text-primary hover:cursor-pointer my-5" disabled selected hidden>Poste</option>
                             </select>
                     </div>
 
                 </div>    
                 <div className="flex gap-24 justify-center mt-[2vh]">
-                    <TextInput  placeholder={'Nom'}/>
-                    <TextInput placeholder={'Prenom'}/>
+                    <InputC placeholder={'Nom'} type={'text'} name={'nom'} onChange={handleInputChange} value={formValues.nom}/>
+                    <InputC placeholder={'Prenom'} type={'text'} name={'prenom'} onChange={handleInputChange} value={formValues.prenom}/>
                 </div>       
-                <div className="flex gap-24 justify-center mt-[2vh]">
-                    <PswdInput  placeholder={'Mot de passe'}/>
-                    <PswdInput  placeholder={'Confirmer mot de passe'}/>
+                <div className="flex gap-24 justify-center mt-[2vh] relative">
+                    <InputC placeholder={'Mot de passe'} type={'password'} name={'psswd'} erreur={!samePsswd} onChange={handleInputChange} value={formValues.psswd}/>
+                    <InputC placeholder={'Confirmer mot de passe'} type={'password'} name={'conf_psswd'} erreur={!samePsswd} onChange={handleInputChange} value={formValues.conf_psswd}/>
                 </div>       
-                <div className="mt-16 text-center">
-                    <button className="text-4xl font-bold py-[2vh] px-36 text-primary border-[5px] border-secondary rounded-2xl hover:bg-sky-100">Créer</button>
+                <h1 className={`text-red-600 text-xl ml-[8vw] mt-2 ${samePsswd?'hidden':''}`}>Mot de passe et Confirmer mot de passe ne se ressemble pas</h1>
+                <div className="mt-[4vh] text-center">
+                    <button className="text-4xl font-bold py-[2vh] px-36 text-primary border-[5px] border-secondary rounded-2xl hover:bg-sky-100 disabled:text-gray-500  disabled:border-gray-400 disabled:hover:cursor-not-allowed"disabled={!formValid}>Créer</button>
                 </div>
          
             </form>
@@ -40,87 +181,18 @@ export default function FormulaireInsertionUser() {
     )
   }
 
-  const TextInput = ({placeholder}:any)=>{
-    const [focus,setFocus] = useState<boolean>(false)
-    const [inputValue,SetInputValue] = useState<string>('')
-
-
-    const handleChange =(e:ChangeEvent<HTMLInputElement>)=>{
-        SetInputValue(e.target.value)
-    }
-    const handleFocus =()=>{
-        setFocus(true)  
-    }
-    const handleBlur=()=>{
-        if (inputValue==="") {
-            setFocus(false)
-        }
-        else console.log('error')
-    }
-    const clickLabel = ()=>{
-        if (focus && inputValue==="") {
-            setFocus(false)
-        }
-        else {
-            setFocus(true)
-        }
-    }
-
-    return (
-        <>
-             <div className="relative mt-10">
-                <h3 className={`text-primary absolute left-5 ${focus? 'top-[-1.5vh] text-2xl' : ' text-3xl top-3'} bg-white`} id="label" onClick={clickLabel}>{placeholder}</h3>
-                <input type="text" className="text-2xl p-4 w-[30vw] border-2 border-primary rounded-lg" onFocus={handleFocus} onBlur={handleBlur} value={inputValue} onChange={handleChange}/>
-            </div>
-        </>
-    )
+  interface CustomInputProps {
+    name: string;
+    placeholder: string;
+    value: string;
+    type: string;
+    erreur: boolean; 
+    onChange: (name: string, value: string) => void;
   }
+  const InputC = ({placeholder,name,type,erreur,onChange,value}:CustomInputProps)=>{
 
-  const EmailInput = ({placeholder}:any)=>{
     const [focus,setFocus] = useState<boolean>(false)
-    const [inputValue,SetInputValue] = useState<string>('')
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-
-    const handleChange =(e:ChangeEvent<HTMLInputElement>)=>{
-        SetInputValue(e.target.value)
-    }
-    const handleFocus =()=>{
-        setFocus(true)  
-    }
-    const handleBlur=()=>{
-        if (inputValue==="") {
-            setFocus(false)
-        }
-        else if (inputValue ) {
-            
-        }
-    }
-    const clickLabel = ()=>{
-        if (focus && inputValue==="") {
-            setFocus(false)
-        }
-        else {
-            setFocus(true)
-        }
-    }
-    return (
-        <>
-             <div className="relative mt-10">
-                <h3 className={`text-primary text-2xl absolute left-5 ${focus? 'top-[-1.5vh] text-2xl' : ' text-3xl top-3'} bg-white`} id="label" onClick={clickLabel}>{placeholder}</h3>
-                <input type="email" className="p-4 text-2xl w-[30vw] border-2 border-primary rounded-lg" onFocus={handleFocus} onBlur={handleBlur} value={inputValue} onChange={handleChange}/>
-            </div>
-        </>
-    )
-  }
-  const PswdInput = ({placeholder}:any)=>{
-    const [focus,setFocus] = useState<boolean>(false)
-    const [inputValue,SetInputValue] = useState<string>('')
-
-
-    const handleChange =(e:ChangeEvent<HTMLInputElement>)=>{
-        SetInputValue(e.target.value)
-    }
+    const [inputValue,SetInputValue] = useState<string>()
     const handleFocus =()=>{
         setFocus(true)  
     }
@@ -139,11 +211,15 @@ export default function FormulaireInsertionUser() {
         }
     }
 
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        onChange(name, e.target.value);
+      };
+
     return (
         <>
              <div className="relative mt-10">
-                <h3 className={`text-primary text-2xl absolute left-5 ${focus? 'top-[-1.5vh] text-2xl' : ' text-3xl top-3'} bg-white`} id="label" onClick={clickLabel}>{placeholder}</h3>
-                <input type="password" className="text-3xl p-4 w-[30vw] border-2 border-primary rounded-lg" onFocus={handleFocus} onBlur={handleBlur} value={inputValue} onChange={handleChange}/>
+                <h3 className={`text-2xl absolute left-5 ${focus? 'top-[-1.5vh] text-2xl' : ' text-3xl top-3'} ${erreur? 'text-red-600':'text-primary'} bg-white`} id="label" onClick={clickLabel}>{placeholder}</h3>
+                <input type={type} className={`text-3xl p-4 w-[30vw] border-2  text-black80 rounded-lg ${erreur? 'border-red-600':'border-primary'}`} onFocus={handleFocus} onBlur={handleBlur} name={name} onChange={handleChange} value={value}/>
             </div>
         </>
     )
