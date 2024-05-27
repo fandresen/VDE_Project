@@ -28,7 +28,7 @@ export default function Home() {
 
   useEffect(() => {
     // recover cookies
-    console.log(isAuthenticated);
+    // console.log(isAuthenticated);
     
     const getRoleFromCookie = async () => {
       if(isAuthenticated) {
