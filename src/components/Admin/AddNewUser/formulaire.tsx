@@ -2,8 +2,12 @@ import {useEffect, useState } from "react"
 import './formulaire.css'
 import axios, { Axios } from "axios"
 import { SelectChangeEvent } from "@mui/material";
+import { useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
+import { AppDispatch,RootState } from "../../../redux/store";
+import { loading, setId, show, vide } from "../../../redux/validationCodePopUp";
 
-const emailRegex = "/^[^\s@]+@[^\s@]+\.[^\s@]+$/";
+// const emailRegex = "/^[^\s@]+@[^\s@]+\.[^\s@]+$/";
 
 interface dataFormT {
     first_name : string;
@@ -18,19 +22,22 @@ export default function FormulaireInsertionUser() {
     const [samePsswd,setSamePsswd]=useState<boolean>(true)
     const [emailValid,setemailValid]=useState<boolean>(true)
     const [connexErr,setConnexErr] = useState<boolean>(false)
-
+    const [formValid, setFormValid] = useState(false);
     const [formValues, setFormValues] = useState({
-        email: '',
-        nom: '',
-        prenom: '',
-        psswd: '',
-        poste:'',
-        conf_psswd: '',
-      });
-    
-      const [formValid, setFormValid] = useState(false);
+      email: '',
+      nom: '',
+      prenom: '',
+      psswd: '',
+      poste:'',
+      conf_psswd: '',
+    });
+
+    const dispatch = useDispatch<AppDispatch>()
+
+    const status :string = useSelector<RootState>((state)=>state.popUp.status) as string
 
       useEffect(()=>{
+
           setFormValues({
               email:'',
               prenom:'',
@@ -39,15 +46,15 @@ export default function FormulaireInsertionUser() {
               psswd:'',
               conf_psswd:''
           })
-      },[connexErr])
+          setemailValid(true)
+      },[connexErr,status])
     
-      const handleInputChange = (name: string, value: string) => {
+  const handleInputChange = (name: string, value: string) => {
     setFormValues((prevValues) => {
       const newValues = { ...prevValues, [name]: value };
 
       // Vérifiez si tous les champs ne sont pas vides
       const isValid = Object.values(newValues).every((val) => val.trim() !== '');
-      console.log(newValues);
       
       setSamePsswd(true)
       if (newValues.conf_psswd !=="") {
@@ -69,7 +76,7 @@ export default function FormulaireInsertionUser() {
 
        const isValid = Object.values(newValues).every((val) => val.trim() !== '');
        setFormValid(isValid)
-       console.log(newValues);
+      //  console.log(newValues);
        
       return newValues;
     });
@@ -88,45 +95,40 @@ export default function FormulaireInsertionUser() {
       }
      
     
-const handleSubmit = (e) => {
+const handleSubmit = (e:HTMLFormElement) => {
         e.preventDefault();
+        dispatch(loading(true))
         
         // Soumettez le formulaire uniquement si il est valide
         if (formValid) {
-
-          // const sendData= async ()=>{
-          //   try {
-          //     const response = await axios.post('/admin/new-user',changerdataForm());
-          //     if (response.status === 200) {
-          //       console.log(res.data.userid)
-          //     }
-          //   } catch (error) {
-              
-          //   }
-              
-              
-          // }
-          // sendData()
-        
         axios.post('/admin/new-user',changerdataForm())
         .then(res =>{
           setConnexErr(false)
           if (res.status === 200) {
-            console.log(res.data.userid)
+            // console.log(res.data.userid)
+            dispatch(setId(res.data.userid))
+            dispatch(show())
           }
-          console.log(res);
           
         })
         .catch(error=>{
           if (error.response.status == 409) {
             setemailValid(false)
-            console.log('email efa ao');
+            setTimeout(()=>{
+              setemailValid(true)
+            },10000)
             
           }
-          else setConnexErr(true);
-          console.log(error.response.status);
-            
-          
+          else {
+            setConnexErr(true);
+            setTimeout(()=>{
+              setConnexErr(false);
+            },10000)
+          } 
+          // console.log(error.response.status);   
+        })
+        .finally(()=>{
+          dispatch(loading(false))
         })
         }
          else {
@@ -134,7 +136,6 @@ const handleSubmit = (e) => {
         }
       };
  
-
     return (
       <>
       {
@@ -142,9 +143,16 @@ const handleSubmit = (e) => {
 
       }
       {
-        !emailValid? <div className="bg-red-700 rounded-lg py-3 w-[50vw] mx-auto"><h1 className="text-white text-2xl text-center font-bold"><img src="src/assets/icon/warning.svg" alt="error" className="w-8 inline-block mr-3 mb-2 text-white" />Il y a deja un compte utilisant cet email</h1></div>:''
+        !emailValid? <div className="bg-red-700 rounded-lg py-3 w-[50vw] mx-auto"><h1 className="text-white text-2xl text-center font-bold"><img src="src/assets/icon/warning.svg" alt="error" className="w-8 inline-block mr-3 mb-2 text-green-500" />Il y a deja un compte utilisant cet email</h1></div>:''
 
       }
+      {
+        status=="success"? <div className="bg-green-600 rounded-lg py-3 w-[50vw] mx-auto"><h1 className="text-white text-2xl text-center font-bold"><img src="src/assets/icon/success.svg" alt="error" className="w-8 inline-block mr-3 mb-2 text-white" />La création de l'utilisateur a été effectuée avec succes.</h1></div> :''
+      }
+      {
+        status == "error"? <div className="bg-red-700 rounded-lg py-3 w-[50vw] mx-auto"><h1 className="text-white text-2xl text-center font-bold"><img src="src/assets/icon/warning.svg" alt="error" className="w-8 inline-block mr-3 mb-2 text-green-500" />Code invalide veuillez réssayer</h1></div> :''
+      }
+       
         <div className="h-auto w-[80vw] pb-8 bg-white mx-auto mt-[3vh] pt-[3vh] rounded-3xl shadow-lg shadow-black90">
             <form className="" onSubmit={handleSubmit} name="createuserForm">
 
@@ -157,7 +165,7 @@ const handleSubmit = (e) => {
                                 <option className="text-secondary hover:cursor-pointer mt-5" value="SUPERVISOR">Superviseur</option>
                                 <option className="text-extracteur hover:cursor-pointer mt-5" value="EXTRACTOR">Extracteur</option>
                                 <option className="text-souricng hover:cursor-pointer my-5" value="SOURCING">Sourcing</option>
-                                <option value="" className="text-primary hover:cursor-pointer my-5" disabled selected hidden>Poste</option>
+                                <option value="" className="text-primary hover:cursor-pointer my-5" selected={formValues.poste===''? true :false} hidden>Poste</option>
                             </select>
                     </div>
 
@@ -181,6 +189,9 @@ const handleSubmit = (e) => {
     )
   }
 
+
+
+  // composant InputC
   interface CustomInputProps {
     name: string;
     placeholder: string;
@@ -200,7 +211,7 @@ const handleSubmit = (e) => {
         if (inputValue==="") {
             setFocus(false)
         }
-        else console.log('error')
+        // else console.log('error')
     }
   const clickLabel = ()=>{
         if (focus && inputValue==="") {

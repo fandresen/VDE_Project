@@ -50,17 +50,17 @@ const login = () => {
 
           // check if the connexion is success
           if (status === 200) {
-            console.log("setting the token ");
+            // console.log("setting the token ");
             
             setToken(data.accessToken)         
             navigate("/home")
             
           } else {
-            console.error("Error during login", data);
+            // console.error("Error during login", data);
             
           }
         } catch (e) {
-          console.error ("Network error during login:", e);
+          // console.error ("Network error during login:", e);
           setNotify({
             show: true,
             error: true,
@@ -140,7 +140,7 @@ const login = () => {
               <div>
                 <button
                   type="submit"
-                  className="bg-[#512da8] text-[#fff] text-xs md:text-sm px-12 py-2 border-transparent rounded-md font-semibold uppercase tracking-wide mt-4 cursor-pointer hover:text-[#0a8852] hover:shadow-md hover:shadow-[#0a8852]"
+                  className="bg-gradient-to-r from-secondary to-primary text-[#fff] text-xs md:text-sm px-12 py-2 border-transparent rounded-md font-semibold uppercase tracking-wide mt-4 cursor-pointer hover:shadow-md hover:scale-105"
                 >
                   Sign in
                 </button>
@@ -148,12 +148,12 @@ const login = () => {
             </form>
         </div>
         <div className="absolute top-0 left-1/2 w-1/2 h-full overflow-hidden transition-all duration-600 easy-in-out rounded-tr-none rounded-bl-[150px] rounded-br-none rounded-tl-[150px] z-10">
-          <div className="relative left-[-100%] w-[200%] h-full bg-gradient-to-r from-indigo-500 to-purple-800 text-[#fff] transition-all duration-600 ease-in-out ">
+          <div className="relative left-[-100%] w-[200%] h-full bg-gradient-to-r from-secondary to-primary text-[#fff] transition-all duration-600 ease-in-out ">
             <div className="absolute w-1/2 h-full right-0 flex items-center justify-center flex-col px-4 text-center top-0 transform translate-x-0 transition-all duration-600 ease-in-out">
               <h1 className="text-[30px] font-bold">Hello,</h1>
               <p className="text-[14px] leading-[20px] tracking-[0.3px] my-5">If you forgot your authentication don't worry</p>
               <Link to="/forgot-password">
-                <button className="bg-transparent bg-[#512da8] text-[#fff] text-xs md:text-sm px-12 py-2 border border-[#f8f4f4] border-transparent rounded-md font-semibold uppercase tracking-wide mt-4 cursor-pointer hover:text-[#0A8852] hover:border-[#EEE] hover:shadow-xl">Forgot Password</button>
+                <button className="bg-transparent bg-[#512da8] text-[#fff] text-xs md:text-sm px-12 py-2 border border-[#f8f4f4] border-transparent rounded-md font-semibold uppercase tracking-wide mt-4 cursor-pointer hover:text-[#fda359] hover:border-[#EEE] hover:shadow-xl">Forgot Password</button>
               </Link>
             </div>
           </div>

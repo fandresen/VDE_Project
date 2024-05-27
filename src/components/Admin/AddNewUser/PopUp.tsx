@@ -1,21 +1,59 @@
 import React, { useState, ChangeEvent, ClipboardEvent } from 'react';
+import { useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
+import { AppDispatch, RootState } from '../../../redux/store';
+import { erreur, hide, loading, success, vide } from '../../../redux/validationCodePopUp';
+import axios from 'axios';
+
 
 interface ModalProps {
   show: boolean;
-  onClose: () => void;
 }
 
-const Modal: React.FC<ModalProps> = ({ show}) => {
+const Modal: React.FC<ModalProps> = ({show}) => {
 
-  const [showModal, setShowModal] = useState(true);
+  const dispatch = useDispatch<AppDispatch>()
+  const id : number = useSelector<RootState>((state)=>state.popUp.id) as number
+  
   const [code, setCode] = useState<string[]>(new Array(6).fill(""));
+  
 
   const handleCloseModal = () => {
-    setShowModal(false);
+    dispatch(hide())
   };
+
+  const sendCode = async (codeVal:number)=>{
+    dispatch(loading(true))
+    try{
+      const res = await axios.post(`/admin/enable-user/${id}`,{
+        "code":codeVal
+      })
+      if(res.status == 200){
+        dispatch(success())
+        setTimeout(()=>{
+          dispatch(vide())
+        },10000)
+      }
+      else {
+        dispatch(erreur())
+        setTimeout(()=>{
+          dispatch(vide())
+        },10000)
+      } 
+    }
+    catch(error){
+      dispatch(erreur())
+      // console.log(error);
+      
+    }
+    finally{
+      dispatch(loading(false))
+    }
+    
+  }
  
 
-  if (!show || !showModal) return null;
+  if (!show) return null;
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>, index: number) => {
     const value = e.target.value;
@@ -33,7 +71,7 @@ const Modal: React.FC<ModalProps> = ({ show}) => {
         
       }
       if (value !== "" && index === 5){
-        console.log(newCode);
+        sendCode(Number(newCode.join('')))        
         handleCloseModal();
       }
     }
@@ -42,16 +80,17 @@ const Modal: React.FC<ModalProps> = ({ show}) => {
   const handlePaste = (e: ClipboardEvent<HTMLInputElement>) => {
     const paste = e.clipboardData.getData('text');
     if (/^[0-9]{6}$/.test(paste)) {
-      setCode(paste.split(""));
+      sendCode(Number(paste)) 
       const lastInput = document.getElementById(`code-input-5`);
       if (lastInput) {
         lastInput.focus();
-        console.log(code);
         handleCloseModal();
       }
     }
     e.preventDefault();
   };
+
+//  setTimeout(()=>console.log(code),10000)
 
   return (
     <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center">
@@ -72,12 +111,6 @@ const Modal: React.FC<ModalProps> = ({ show}) => {
             />
           ))}
         </div>
-        {/* <button
-          onClick={onClose}
-          className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-700"
-        >
-          Close
-        </button> */}
       </div>
     </div>
   );
