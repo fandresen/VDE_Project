@@ -2,16 +2,27 @@
 @tailwind components;
 @tailwind utilities;
 
-@layer base{
-    #sidebar{
-        transition: width 0.3s ease-in-out;
-    }
+@layer base {
+  #sidebar {
+    transition: width 0.3s ease-in-out;
+  }
 
-    .sidebar-button{
-        transition: background-color 0.3s ease-in-out;
-    }
-    
-    .sidebar-button span{
-        transition: display 0.3s ease-in-out;
-    }
+  .sidebar-button {
+    transition: background-color 0.3s ease-in-out;
+  }
+
+  .sidebar-button span {
+    transition: display 0.3s ease-in-out;
+  }
+
+  /* Hide scrollbar for Chrome, Safari and Opera */
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Hide scrollbar for IE, Edge and Firefox */
+  .hide-scrollbar {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+  }
 }

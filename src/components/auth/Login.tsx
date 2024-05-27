@@ -49,9 +49,7 @@ const login = () => {
           })
 
           // check if the connexion is success
-          if (status === 200) {
-            console.log("setting the token ");
-            
+          if (status === 200) {           
             setToken(data.accessToken)         
             navigate("/home")
             

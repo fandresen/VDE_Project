@@ -56,5 +56,15 @@ export default {
   },
   plugins: [
     // eslint-disable-next-line no-undef
+    require("tailwindcss-animate"),
+
+    function({addUtilities}){
+      const newUtilities = {
+       ".no-scrollbar::-webkit-scrollbar": {
+        display: "none",
+       }
+      }
+      addUtilities(newUtilities)
+    }
   ],
 }

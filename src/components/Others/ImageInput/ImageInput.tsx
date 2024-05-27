@@ -30,8 +30,9 @@ const ImageInput: React.FC<ImageInputProps> = ({ initialImage, onImageChange }) 
       <img
         src={image}
         alt="Avatar"
-        className=" w-full h-full rounded-full cursor-pointer"
+        className=" w-80 h-80 rounded-full cursor-pointer object-contain bg-primary"
         onClick={handleImageClick}
+        crossOrigin='anonymous'
       />
       <input
         type="file"
@@ -45,3 +46,4 @@ const ImageInput: React.FC<ImageInputProps> = ({ initialImage, onImageChange }) 
 };
 
 export default ImageInput;
+
