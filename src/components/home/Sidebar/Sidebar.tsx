@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import SidebarExtractor from "../../extractor/Sidebar/Sidebar";
+import SidebarExtractor from "../../extractor/home/Sidebar/Sidebar";
 import SidebarAdmin from "../../Admin/Sidebar/SidebarAdmin";
 
 

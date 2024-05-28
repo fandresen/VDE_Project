@@ -1,5 +1,5 @@
-import LogoVde from "../../Others/LogoVde/LogoVde";
-import Logout from "../../Others/Logout/Logout";
+import LogoVde from "../../../Others/LogoVde/LogoVde";
+import Logout from "../../../Others/Logout/Logout";
 import Content from "./Content/Content";
 
 interface SidebarExtractorProps {

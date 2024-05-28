@@ -1,4 +1,4 @@
-import LastWeekCV from "./LastWeekCV/LastWeekCV";
+import LastWeekCV from "../LastWeekCV/LastWeekCV";
 import TodayCV from "./TodayCV/TodayCV";
 import WorkDuration from "./WorkDuration/WorkDuration";
 
