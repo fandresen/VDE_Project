@@ -16,7 +16,7 @@ export default function Content({isOpen}: SidebarExtractorProps) {
     
   return (
     <>
-        <Link to="/home" className={`flex items-center w-full gap-5 py-2 ${buttonClassname} sidebar-button h-20 px-2 rounded-3xl`}>
+        <Link to="/admin" className={`flex items-center w-full gap-5 py-2 ${buttonClassname} sidebar-button h-20 px-2 rounded-3xl`}>
             <Home />
             <span className={`${spanClassname} text-xl`}>Accueil</span>
         </Link>

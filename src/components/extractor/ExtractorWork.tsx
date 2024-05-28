@@ -2,6 +2,8 @@ import HighlightStat from "./HighlightStat/HighlightStat"
 
 
 const ExtractorWork = () => {
+  console.log("extractor");
+  
   return (
     <div className="flex flex-col gap-16 p-10">
       <div>
