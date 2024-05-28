@@ -8,6 +8,7 @@ interface SidebarExtractorProps {
 }
 
 export default function Content({isOpen}: SidebarExtractorProps) {
+    
 
     const spanClassname = isOpen ? "":"hidden"
     const buttonClassname = isOpen ? " hover:bg-button" : ""
