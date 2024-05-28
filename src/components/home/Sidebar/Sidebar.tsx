@@ -1,11 +1,15 @@
 import { useEffect, useState } from "react";
 import SidebarExtractor from "../../extractor/home/Sidebar/Sidebar";
 import SidebarAdmin from "../../Admin/Sidebar/SidebarAdmin";
+import { useSelector } from "react-redux";
+import { RootState } from "../../../redux/store";
 
 
 export default function Sidebar() {
   const [isOpen, setIsOpen] = useState(false);
-  const roleUser = "ADMIN"
+  const roleUser = useSelector((state:RootState) => state.auth.userRole)
+  
+  console.log(roleUser);
   
 
   useEffect(() => {

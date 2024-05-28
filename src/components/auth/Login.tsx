@@ -1,139 +1,202 @@
 /* eslint-disable react-hooks/rules-of-hooks */
-import { useEffect, useState } from "react"
-import axios from "axios"
-import { Link, useNavigate } from "react-router-dom"
+import { useEffect, useState } from "react";
+import axios from "axios";
+import { Link, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
-// import Cookies from 'js-cookie'; 
+// import Cookies from 'js-cookie';
 // import { jwtDecode } from 'jwt-decode';
 
 import { FaCheckCircle, FaTimesCircle } from "react-icons/fa";
 import { PiEyeClosedDuotone, PiEyeBold } from "react-icons/pi";
 import { setToken } from "../../services/TokenServices";
+import { jwtDecode } from "jwt-decode";
+import { setUserRole } from "../../redux/authSlice";
+import { useDispatch } from "react-redux";
 
-
+interface decodedTokenInteface {
+  browser: string;
+  exp: number;
+  first_name: string;
+  iat: number;
+  role: "ADMIN" | "SOURCING" | "EXTRACTOR" | "SUPERVISOR";
+  userId: number;
+}
 
 const login = () => {
-    const navigate = useNavigate()
-    const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
+  const navigate = useNavigate();
+  const dispatch = useDispatch()
+  const isAuthenticated = useSelector(
+    (state: RootState) => state.auth.isAuthenticated
+  );
 
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
-    const [showPassword, setShowPassword] = useState(false);
-    const [notify, setNotify] = useState({
-      show: false,
-      error: false,
-      message: ''
-    })
+  let decodedToken: decodedTokenInteface = {
+    browser: "",
+    exp: 0,
+    first_name: "",
+    iat: 0,
+    role: "ADMIN",
+    userId: 0,
+  }
 
-    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
+  const [showPassword, setShowPassword] = useState(false);
+  const [notify, setNotify] = useState({
+    show: false,
+    error: false,
+    message: "",
+  });
 
-        setPassword('');
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    setPassword("");
+
+    try {
+      const { data, status } = await axios.post(
+        "/auth/login",
+        {
+          email,
+          password,
+        },
+        { withCredentials: true }
+      );
+
+      console.log(data);
+
+      if (data.accessToken) {
+        decodedToken = jwtDecode(data.accessToken);
+        console.log("Decoded JWT:", decodedToken);
+      } else {
+        console.error("Token not found in response data");
+      }
+
+      //axios.defaults.headers.common['Authorization'] = `Bearer ${data.token}`;
+
+      setNotify({
+        show: true,
+        error: false,
+        message: "success.",
+      });
+
+      // check if the connexion is success
+      if (status === 200) {
+        // console.log("setting the token ");
+
+        setToken(data.accessToken);
+        dispatch(setUserRole(decodedToken.role));
         
-        try {
-          const {data, status} = await axios.post('/auth/login', {
-              email,
-              password
-          }, {withCredentials:true});
-
-        
+        if (decodedToken.role === "ADMIN") {
+          console.log("To admin");
           
-        //axios.defaults.headers.common['Authorization'] = `Bearer ${data.token}`;
-         
-          setNotify({
-            show: true,
-            error: false,
-            message: "success."
-          })
-
-          // check if the connexion is success
-          if (status === 200) {           
-            setToken(data.accessToken)         
-            navigate("/home")
-            
-          } else {
-            console.error("Error during login", data);
-            
-          }
-        } catch (e) {
-          console.error ("Network error during login:", e);
-          setNotify({
-            show: true,
-            error: true,
-            message: 'Incorrect email or password!'
-          })
+          navigate("/admin")
+        }else if (decodedToken.role === "EXTRACTOR"){ 
+          console.log("To extractor");
+          navigate("/extractor")
         }
-
+      } else {
+        // console.error("Error during login", data);
       }
-
-    const handleShowPassword = () => {
-      setShowPassword(!showPassword);
+    } catch (e) {
+      // console.error ("Network error during login:", e);
+      setNotify({
+        show: true,
+        error: true,
+        message: "Incorrect email or password!",
+      });
     }
+  };
 
-      let info;
-      let icon;
-      if (notify.show) {
-        icon = notify.error ? <FaTimesCircle className="mr-1"/> : <FaCheckCircle className="mr-1"/>
-        info = <div className={`flex items-center text-[12px] ${notify.error ? 'text-red-500' : 'text-green-500'}`}>
-          {icon} {notify.message}
-        </div>
-      }
+  const handleShowPassword = () => {
+    setShowPassword(!showPassword);
+  };
 
-    useEffect(() => {    
-      if (isAuthenticated) {        
-        navigate("/home")
-      }
-    }, [isAuthenticated, navigate]);
+  let info;
+  let icon;
+  if (notify.show) {
+    icon = notify.error ? (
+      <FaTimesCircle className="mr-1" />
+    ) : (
+      <FaCheckCircle className="mr-1" />
+    );
+    info = (
+      <div
+        className={`flex items-center text-[12px] ${
+          notify.error ? "text-red-500" : "text-green-500"
+        }`}
+      >
+        {icon} {notify.message}
+      </div>
+    );
+  }
 
-   
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate("/");
+    }
+  }, [isAuthenticated, navigate]);
 
   return (
-    <div className="flex items-center justify-center
-     flex-col px-6 py-12 lg:px-8 h-screen bg-gradient-to-r from-gray-200 to-blue-200">
+    <div
+      className="flex items-center justify-center
+     flex-col px-6 py-12 lg:px-8 h-screen bg-gradient-to-r from-gray-200 to-blue-200"
+    >
       <div className=" relative bg-white rounded-[20px] shadow-xl overflow-hidden w-full max-w-3xl min-h-[450px]">
         <div className="absolute top-0 h-full left-0 w-1/2 transition-all duration-600 ease-in-out transform animate-move">
-          <form onSubmit={handleSubmit}  action="#" method="POST" className="flex items-center justify-center h-full px-10 flex-col bg-[#fff]">
+          <form
+            onSubmit={handleSubmit}
+            action="#"
+            method="POST"
+            className="flex items-center justify-center h-full px-10 flex-col bg-[#fff]"
+          >
             <h1 className="text-[40px] font-bold mb-5">Log In</h1>
-            <span className="text-[12px] text-center">Use your <label htmlFor="email">email</label> and <label htmlFor="password">password</label></span>
-              <div>
-                <div className="mt-2">
-                  <input
-                      onChange={e => setEmail(e.target.value)}
-                      id="email"
-                      name="email"
-                      type="email"
-                      value={email}
-                      autoComplete="email"
-                      placeholder="Email"
-                      required
-                      className=" bg-[#eee] border-none my-2 px-4 py-3 text-sm rounded-md w-full outline-none"
-                  />
-                </div>
+            <span className="text-[12px] text-center">
+              Use your <label htmlFor="email">email</label> and{" "}
+              <label htmlFor="password">password</label>
+            </span>
+            <div>
+              <div className="mt-2">
+                <input
+                  onChange={(e) => setEmail(e.target.value)}
+                  id="email"
+                  name="email"
+                  type="email"
+                  value={email}
+                  autoComplete="email"
+                  placeholder="Email"
+                  required
+                  className=" bg-[#eee] border-none my-2 px-4 py-3 text-sm rounded-md w-full outline-none"
+                />
               </div>
+            </div>
 
-              <div className="relative">
-                <div className="mt-2">
-                  <input
-                      onChange={e => setPassword(e.target.value)}
-                    id="password"
-                    name="password"
-                    type={(showPassword === false) ? 'password' : 'text'}
-                    value={password}
-                    autoComplete="current-password"
-                    placeholder="Password"
-                    required
-                    className={` bg-[#eee] border my-2 px-4 py-3 text-sm rounded-md w-full outline-none ${notify.error ? 'border-red-500' : 'border-transparent'}`}
-                  />
-                  <div className="absolute top-8 right-4 cursor-pointer hover:bg-[#bfc5da] hover:rounded">
-                    {
-                      (showPassword === false) ? <PiEyeClosedDuotone onClick={handleShowPassword}/> : <PiEyeBold onClick={handleShowPassword}/>
-                    }
-                  </div>
+            <div className="relative">
+              <div className="mt-2">
+                <input
+                  onChange={(e) => setPassword(e.target.value)}
+                  id="password"
+                  name="password"
+                  type={showPassword === false ? "password" : "text"}
+                  value={password}
+                  autoComplete="current-password"
+                  placeholder="Password"
+                  required
+                  className={` bg-[#eee] border my-2 px-4 py-3 text-sm rounded-md w-full outline-none ${
+                    notify.error ? "border-red-500" : "border-transparent"
+                  }`}
+                />
+                <div className="absolute top-8 right-4 cursor-pointer hover:bg-[#bfc5da] hover:rounded">
+                  {showPassword === false ? (
+                    <PiEyeClosedDuotone onClick={handleShowPassword} />
+                  ) : (
+                    <PiEyeBold onClick={handleShowPassword} />
+                  )}
                 </div>
-                {info}
               </div>
+              {info}
+            </div>
 
               <div>
                 <button
@@ -149,17 +212,18 @@ const login = () => {
           <div className="relative left-[-100%] w-[200%] h-full bg-gradient-to-r from-indigo-500 to-purple-800 text-[#fff] transition-all duration-600 ease-in-out ">
             <div className="absolute w-1/2 h-full right-0 flex items-center justify-center flex-col px-4 text-center top-0 transform translate-x-0 transition-all duration-600 ease-in-out">
               <h1 className="text-[30px] font-bold">Hello,</h1>
-              <p className="text-[14px] leading-[20px] tracking-[0.3px] my-5">If you forgot your authentication don't worry</p>
+              <p className="text-[14px] leading-[20px] tracking-[0.3px] my-5">
+                If you forgot your authentication don't worry
+              </p>
               <Link to="/forgot-password">
                 <button className="bg-transparent bg-[#512da8] text-[#fff] text-xs md:text-sm px-12 py-2 border border-[#f8f4f4] border-transparent rounded-md font-semibold uppercase tracking-wide mt-4 cursor-pointer hover:text-[#0A8852] hover:border-[#EEE] hover:shadow-xl">Forgot Password</button>
               </Link>
             </div>
           </div>
         </div>
-
       </div>
-      </div>
-  )
-}
+    </div>
+  );
+};
 
-export default login
+export default login;

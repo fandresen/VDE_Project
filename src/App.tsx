@@ -8,6 +8,7 @@ import { useSelector } from 'react-redux';
 import { useEffect } from 'react';
 import AddNewUser from './components/Admin/AddNewUser/AddNewUser';
 import Admin from './components/Admin/Admin';
+import ExtractorWork from './components/extractor/ExtractorWork';
 
 
 
@@ -34,8 +35,12 @@ function App() {
       element: <Home />,
       children: [
         {
-          path: '/home',
+          path: '/admin',
           element: <Admin />
+        },
+        {
+          path: '/extractor',
+          element: <ExtractorWork />
         },
         {
           path: '/add',
