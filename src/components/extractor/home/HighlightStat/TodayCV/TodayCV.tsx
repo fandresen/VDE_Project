@@ -1,4 +1,4 @@
-import RadialProgressBar from "../../../Others/RadiaProgress/RadialProgress";
+import RadialProgressBar from "../../../../Others/RadiaProgress/RadialProgress";
 
 
 export default function TodayCV() {
