@@ -25,7 +25,7 @@ const refreshToken = async() => {
                     Authorization: `Bearer ${token}`
                 }
             });
-            //console.log("TOKEN REFRESHED :", response.data.accessToken);
+            //console.log("TOKEN REFRESHED :", response.data.accessToken);            
             setToken(response.data.accessToken);          
             
             //console.log("NOW THE ACTUAL TOKEN IS", getToken());

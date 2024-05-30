@@ -151,7 +151,7 @@ const EditUserForm: React.FC<EditUserProps> = ({
           <div className="w-full flex justify-center">
             <ImageInput
               initialImage={
-                `http://192.168.1.136:2024/uploads/${userData.photo}` ||
+                `http://192.168.88.40:2024/uploads/${userData.photo}` ||
                 defaultphoto
               }
               onImageChange={handleImageChange}
