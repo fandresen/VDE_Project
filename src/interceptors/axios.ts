@@ -4,7 +4,7 @@ import axios from 'axios';
 import { getToken, setToken } from '../services/TokenServices';
 
 // Créer une instance d'Axios
-axios.defaults.baseURL = 'http://192.168.1.136:2024/api';
+axios.defaults.baseURL = 'http://192.168.88.40:2024/api';
 axios.defaults.withCredentials = true;
 
 // Variable pour suivre si une requête de rafraîchissement est en cours
@@ -25,7 +25,7 @@ const refreshToken = async() => {
                     Authorization: `Bearer ${token}`
                 }
             });
-            //console.log("TOKEN REFRESHED :", response.data.accessToken);
+            //console.log("TOKEN REFRESHED :", response.data.accessToken);            
             setToken(response.data.accessToken);          
             
             //console.log("NOW THE ACTUAL TOKEN IS", getToken());

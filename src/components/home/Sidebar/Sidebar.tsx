@@ -8,8 +8,9 @@ import { RootState } from "../../../redux/store";
 export default function Sidebar() {
   const [isOpen, setIsOpen] = useState(false);
   const roleUser = useSelector((state:RootState) => state.auth.userRole)
+  // const state = useSelector((state:RootState) => state.auth)
   
-  console.log(roleUser);
+  // console.log(state);
   
 
   useEffect(() => {

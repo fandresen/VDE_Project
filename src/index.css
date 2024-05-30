@@ -25,4 +25,9 @@
     -ms-overflow-style: none; /* IE and Edge */
     scrollbar-width: none; /* Firefox */
   }
+
+  .progression {
+    border-collapse: separate;
+    border-spacing: 10px;
+  }
 }
