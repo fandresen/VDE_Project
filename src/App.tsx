@@ -43,7 +43,7 @@ function App() {
           path: '/extractor',
           element: <ExtractorWork />
         },{
-          path: '/extractor//workSpace',
+          path: '/extractor/workSpace',
           element:<ExtractorWorkspace/>
         },
         {

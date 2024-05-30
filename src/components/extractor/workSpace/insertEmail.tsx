@@ -1,8 +1,9 @@
+import axios, { AxiosError } from "axios";
 import { useEffect, useRef, useState } from "react";
 
 const InsertEmail = () => {
   const [tabList, setTablist] = useState<number[]>([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]);
-  const [emailExist,setEmailExist]=useState<boolean>(false)
+  const [emailExist,setEmailExist]=useState<boolean|null>(null)
   const liste = useRef<HTMLDivElement>(null);
 
   const emailValid  = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/; 
@@ -33,16 +34,50 @@ const InsertEmail = () => {
     }
   }, []);
 
-  const checkEmail =(email:string)=>{
-      console.log(email);
-      //verfication et insertion email dans la base
+  const sendEmail= async (email:string,input)=>{
+    try {
+        const res = (await axios.post('/extract/addemail',{"email":email}))
+        if(res && res.data &&res.data.status){
+          if(await res.data.status==true){
+            changeBgGreen(input)
+            console.log(res.data.id);
+          }  
+        }
+       
+    } catch (error:any) {
+      if(error.response.status){
+        if(error.response.status==400){
+          changeBgRed(input)
+        }
+      }
+      console.log(error);
+    }
+      
+  }
+
+  const changeBgGreen =(input)=>{
+    if(input.targe.classList.contains('bg-red-400')){
+      input.target.classList.remove('bg-red-400')
+    } 
+    input.target.classList.add('bg-green-300')
+    setTimeout(()=>{
+              input.target.classList.remove('bg-green-300')
+        },2000)
+  }
+  const changeBgRed =(input)=>{
+    input.target.classList.add('bg-red-400')
+  }
+
+  const checkEmail =(email:string,input:React.KeyboardEvent<HTMLInputElement>)=>{
+      sendEmail(email,input)
   }
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
+      e.preventDefault()
       const email = e.currentTarget.value;
       if (emailValid.test(email)) {
-        checkEmail(email);
+        checkEmail(email,e);
       }
     }
   }
@@ -71,7 +106,7 @@ const InsertEmail = () => {
         <div className="w-[80vw] border border-black20 mt-2"></div>
 
         {tabList.map((tab: number) => (
-          <div key={tab} className={`${emailExist?'bg-[rgba(255,0,0,0.8)]':''}`}>
+          <div key={tab} id={tab.toString()}>
             <div className="mt-[1vh] flex justify-start">
               <h1 className="text-black90 w-[2vw] text-center text-3xl font-semibold mr-[10vw]">{tab}</h1>
               <input type="email" className="border-none h-10 w-[40vw] py-6 text-2xl bg-transparent" onKeyDown={handleKeyDown}/>

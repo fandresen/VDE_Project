@@ -13,7 +13,7 @@ export default function Menu() {
   return (
     <>
     <div>
-      <Link to={"/extractor//workSpace"}>
+      <Link to={"/extractor/workSpace"}>
           <LuFileSearch2  className="w-8 h-8"/>
       </Link>
         

@@ -67,7 +67,12 @@ const InsertCVForm = () => {
                 console.log('insert successfully');
             }
         } catch (error) {
+
             console.log(error);
+            setConnexErr(true)
+            setTimeout(()=>{
+                setConnexErr(false)
+            },5000)
         }
     }
 
