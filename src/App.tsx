@@ -8,7 +8,7 @@ import { useSelector } from 'react-redux';
 import { useEffect } from 'react';
 import AddNewUser from './components/Admin/AddNewUser/AddNewUser';
 import Admin from './components/Admin/Admin';
-import ExtractorWork from './components/extractor/ExtractorWork';
+import ExtractorWork from './components/extractor/home/ExtractorWork';
 
 
 

@@ -7,10 +7,10 @@ interface SidebarExtractorProps {
 
 export default function Logout({isOpen}: SidebarExtractorProps) {
   const spanClassname = isOpen ? "":"hidden"
-  const buttonClassname = isOpen ? "rounded-3xl hover:bg-button" : ""
+  const buttonClassname = isOpen ? "w-80 rounded-3xl hover:bg-button" : ""
 
   return (
-    <button className={`flex items-center gap-5 ${buttonClassname} w-80 sidebar-button h-20 px-2`}>
+    <button className={`flex items-center gap-5 ${buttonClassname}  sidebar-button h-20 px-2`}>
     <div className="flex justify-center">
         <IoLogOut className="w-icon h-icon" />
     </div>

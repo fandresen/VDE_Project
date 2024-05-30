@@ -85,7 +85,7 @@ export default function ListUser() {
                 <td className=" flex justify-center w-20 h-20 rounded-full">
                   <img
                     src={
-                      `http://192.168.1.136:2024/uploads/${user.photo}` ||
+                      `http://192.168.88.40:2024/uploads/${user.photo}` ||
                       defaultphoto
                     }
                     alt="Avatar"

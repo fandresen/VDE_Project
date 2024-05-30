@@ -1,7 +1,18 @@
 import axios from "axios";
-import { setAccessToken, setAuth } from "../redux/authSlice";
+import { setAccessToken, setAuth, setUserRole } from "../redux/authSlice";
 import { store } from "../redux/store";
+import { jwtDecode } from "jwt-decode";
 
+export interface JWTPayloadType {
+  
+    userId: number
+    first_name: string
+    role: "EXTRACTOR" | "SOURCING" | "ADMIN" | "SUPERVISEUR"   
+    browser: string
+    iat: number
+    exp: number
+  
+}
 
 export const getToken = () => {
   // Vérifier d'abord les cookies
@@ -22,8 +33,10 @@ export const getToken = () => {
 export const setToken = (accessToken:string) => {
   // console.log("SET THE TOKEN STATE TO :", accessToken);
   document.cookie = `accessToken=${accessToken}; path=/`;
+  const decodedToken: JWTPayloadType = jwtDecode(accessToken);
   store.dispatch(setAccessToken(accessToken));
   store.dispatch(setAuth(true))
+  store.dispatch(setUserRole(decodedToken.role))
 };
 
 export const verifyToken = (accessToken:string) => {
