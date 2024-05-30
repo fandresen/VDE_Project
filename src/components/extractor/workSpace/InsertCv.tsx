@@ -1,6 +1,7 @@
 import axios from "axios";
-import {ChangeEvent, ChangeEventHandler, EventHandler, FormEvent, useRef, useState } from "react";
-
+import {useRef, useState } from "react";
+import { useDispatch } from "react-redux";
+import { setAddCv } from "../../../redux/validationCodePopUp";
 interface dataformT {
         first_name:string;
         last_name:string;
@@ -12,7 +13,6 @@ interface dataformT {
         ville:string;   
 }
 const InsertCVForm = () => {
-
     const [emailExist,setEmailExist]=useState<boolean>()
     const [connexErr,setConnexErr]=useState<boolean>()
     const [formValid,setFormValid]=useState<boolean>(false)
@@ -26,6 +26,7 @@ const InsertCVForm = () => {
         adress:"",
         ville:""
     })
+    const dispatch = useDispatch()
 
 
     const emailValid  = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/; 
@@ -64,6 +65,7 @@ const InsertCVForm = () => {
         try {
             const res = (await axios.post('/extract/add-candidate',data))
             if (res.status ==200) {
+                dispatch(setAddCv())
                 console.log('insert successfully');
             }
         } catch (error) {
@@ -87,7 +89,21 @@ const InsertCVForm = () => {
             if (emailValid.test(inputEmail.current.value)) {
                 checkEmail(inputEmail.current.value)
                 // console.log('email:',inputEmail.current.value);  
-            }
+     
+    const handleChange =(e:React.ChangeEvent<HTMLInputElement>)=>{
+        setFormValues((prevValues) => {
+            const newValues = { ...prevValues, [e.target.name]: e.target.value};
+            // console.log(newValues);
+            const isValid = Object.values(newValues).every((val) => val.trim() !== '');
+            
+            // Vérifiez si tous les champs ne sont pas vides
+            setFormValid(isValid)
+
+            return newValues
+    })
+
+
+    }       }
         }
     })
 

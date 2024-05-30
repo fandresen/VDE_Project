@@ -39,7 +39,10 @@ export default function Home() {
           
           dispatch(setUserRole(decodedToken.role));
           if(userRole === "EXTRACTOR"){
-            navigate("/extractor")
+            if (window.location.pathname=="/extractor/workSpace") {
+              navigate("/extractor/workSpace")
+            }
+            else navigate("/extractor");
           }
         } catch (error) {
           console.error('Error decoding token:', error);
