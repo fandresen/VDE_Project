@@ -1,3 +1,4 @@
+// Extractors 
 import CVQuality from "./CVQuality/CVQuality";
 import ConfirmedCV from "./ConfirmedCV/ConfirmedCV";
 import ExtractedCV from "./ExtractedCV/ExtractedCV";
