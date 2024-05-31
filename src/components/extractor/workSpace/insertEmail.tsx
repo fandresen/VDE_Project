@@ -38,11 +38,11 @@ const InsertEmail = () => {
     }
   }, []);
 
-  const sendEmail= async (email:string,input)=>{
+  const sendEmail= async (email:string,input:HTMLInputElement)=>{
     try {
         const res = (await axios.post('/extract/addemail',{"email":email}))
         if(res && res.data &&res.data.status){
-          if(await res.data.status==true){
+          if(res.data.status==true){
                 if(input.target.classList.contains('bg-red-400')){
                       input.target.classList.remove('bg-red-400')
                   } 
@@ -51,7 +51,7 @@ const InsertEmail = () => {
                             input.target.classList.remove('bg-green-300')
                       },2000)
 
-                const btn:HTMLButtonElement = document.getElementById(`btn${input.target.id}`) as HTMLButtonElement
+                const btn:HTMLButtonElement = document.getElementById(`btn${input.target.id}`) as HTMLButtonElement;
                 btn.disabled = false;
                 btn.addEventListener('click',()=>{
                   handleEditclick(email,res.data.id)
@@ -61,21 +61,20 @@ const InsertEmail = () => {
         }
        
     } catch (error:any) {
-      if(error.response.status){
+      if(error.response){
         if(error.response.status==400){
           changeBgRed(input)
-        }
-      }
-      console.log(error);
+        }   
+      }  
     }
       
   }
 
-  const changeBgRed =(input)=>{
+  const changeBgRed =(input:HTMLInputElement)=>{
     input.target.classList.add('bg-red-400')
   }
 
-  const checkEmail =(email:string,input:React.KeyboardEvent<HTMLInputElement>)=>{
+  const checkEmail =(email:string,input:HTMLInputElement)=>{
       sendEmail(email,input)
   }
 
@@ -109,8 +108,8 @@ const InsertEmail = () => {
           <div key={tab} id={tab.toString()}>
             <div className="mt-[1vh] flex justify-start">
               <h1 className="text-black90 w-[2vw] text-center text-3xl font-semibold mr-[10vw]">{tab}</h1>
-              <input type="email" className="border-none h-10 w-[40vw] py-6 text-2xl bg-transparent" id={tab.toString()} onKeyDown={handleKeyDown}/>
-              <button className="text-white text-xl font-semibold bg-primary px-6 rounded-xl ml-[18vw] disabled:bg-blue-300 disabled:cursor-not-allowed"disabled id={`btn${tab.toString()}`}>Edit</button>
+              <input type="email" className="border-none h-10 w-[40vw] py-6 text-2xl" id={tab.toString()} onKeyDown={handleKeyDown}/>
+              <button className="text-white text-xl font-semibold bg-primary px-6 rounded-xl ml-[18vw] disabled:bg-blue-300 disabled:cursor-not-allowed"disabled={true} id={`btn${tab.toString()}`}>Edit</button>
             </div>
             <div className="w-[80vw] border border-black20 mt-2"></div>
           </div>
